@@ -1,13 +1,13 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@/lib/prisma";
+import { NextRequest } from "next/server";
 
-type RouteParams = {
-  params: { id: string };
-};
-
-export async function DELETE(_req: Request, { params }: RouteParams) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await prisma.listing.delete({
     where: {
-      id: params.id, // ✅ string, coincide con Prisma
+      id: params.id,
     },
   });
 

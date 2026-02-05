@@ -17,9 +17,6 @@
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",

@@ -24,3 +24,22 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ocultar scrollbar pero mantener scroll */
+.hide-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE/Edge legacy */
+  scrollbar-width: none;     /* Firefox */
+}
+
+@keyframes blinkFade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.blink-fade {
+  animation: blinkFade 1.4s ease-in-out infinite;
+}

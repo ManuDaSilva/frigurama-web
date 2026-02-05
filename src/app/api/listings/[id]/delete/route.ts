@@ -1,14 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type Context = {
+  params: Promise<{ id: string }>;
+};
+
+export async function DELETE(_req: NextRequest, { params }: Context) {
+  const { id } = await params;
+
   await prisma.listing.delete({
-    where: {
-      id: params.id,
-    },
+    where: { id },
   });
 
   return new Response(null, { status: 204 });

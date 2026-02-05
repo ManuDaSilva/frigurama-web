@@ -12,6 +12,7 @@
     "@googlemaps/js-api-loader": "^2.0.2",
     "@prisma/client": "^6.15.0",
     "cloudinary": "^2.8.0",
+    "dotenv": "^17.2.3",
     "leaflet": "^1.9.4",
     "next": "^16.1.6",
     "react": "19.1.0",

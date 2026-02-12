@@ -43,7 +43,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#e7ecec] text-black`}
       >
         {/* HEADER FIJO ARRIBA */}
-        <Header />
+        {/*<Header />  -- el cabecero de la web capado*/}
 
         {/* Contenido con padding-top para no quedar debajo del header */}
         <div className="pt-20">

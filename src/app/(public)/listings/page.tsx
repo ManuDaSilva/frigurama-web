@@ -1,7 +1,7 @@
 // src/app/listings/page.tsx
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, PropertyType } from "@prisma/client";
 import ListingCard from "@/components/ListingCard";
 
 
@@ -23,6 +23,10 @@ export default async function ListingsPage({
   // ========= Filtros =========
   const q = (sp.q as string | undefined)?.trim();
   const city = (sp.city as string | undefined)?.trim();
+
+  const VALID_TYPES = ["Piso","Atico","Chalet","Adosado","Estudio","Local","Garaje","Terreno"] as const;
+  const rawType    = (sp.type as string | undefined)?.trim();
+  const typeFilter = VALID_TYPES.includes(rawType as never) ? (rawType as PropertyType) : undefined;
   const min = toInt(sp.min as string | undefined);
   const max = toInt(sp.max as string | undefined);
   const minRooms = toInt(sp.bedrooms as string | undefined);
@@ -40,6 +44,8 @@ export default async function ListingsPage({
 
   // ========= WHERE dinámico (Prisma) =========
   const where: Prisma.ListingWhereInput = {
+    status: "activo",
+    ...(typeFilter ? { type: typeFilter } : {}),
     ...(q
       ? {
           OR: [
@@ -116,6 +122,17 @@ export default async function ListingsPage({
           defaultValue={city ?? ""}
           className="border rounded px-3 py-2"
         />
+        <select name="type" defaultValue={rawType ?? ""} className="border rounded px-3 py-2">
+          <option value="">Tipo</option>
+          <option value="Piso">Piso</option>
+          <option value="Atico">Ático</option>
+          <option value="Chalet">Chalet</option>
+          <option value="Adosado">Adosado</option>
+          <option value="Estudio">Estudio</option>
+          <option value="Local">Local</option>
+          <option value="Garaje">Garaje</option>
+          <option value="Terreno">Terreno</option>
+        </select>
         <input
           name="min"
           type="number"

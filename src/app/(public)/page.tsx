@@ -7,6 +7,9 @@ import { useState } from "react";
 import ApartmentSlider from "@/components/ApartmentSlider";
 import TerrainSlider from "@/components/TerrainSlider";
 import HousesVillasSlider from "@/components/HousesVillasSlider";
+import ParallaxCardsSection from "@/components/ParallaxCardsSection";
+import ContactSection from "@/components/ContactSection";
+
 
 export default function Home() {
   const [villaActive, setVillaActive] = useState({
@@ -22,7 +25,7 @@ export default function Home() {
       {/* HERO PRINCIPAL */}
       <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
         <Image
-          src="/rigurama-logo.png"
+          src="/rigurama-logo.svg"
           alt="Rigurama logo"
           width={500}
           height={200}
@@ -50,7 +53,7 @@ export default function Home() {
 
       {/* SECCIÓN APARTAMENTOS */}
       <section className="bg-[#e7ecec] py-32">
-        <div className="mx-auto max-w-[1400px] px-16">
+        <div className="mx-auto max-w-[1800px] px-16">
           <div className="grid grid-cols-[360px_760px_320px] gap-x-16 items-start">
             {/* Izquierda */}
             <div className="pt-6">
@@ -82,9 +85,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ✅ SECCIÓN CASAS Y VILLAS */}
+      {/* SECCIÓN CASAS Y VILLAS */}
       <section className="group py-24">
-        <div className="mx-auto max-w-[1400px] px-10">
+        <div className="mx-auto max-w-[1700px] px-10">
           <div className="grid gap-x-16 items-start lg:grid-cols-[360px_320px_760px]">
             {/* IZQUIERDA: título + botón + texto + preview (solo en hover) */}
             <div>
@@ -104,7 +107,7 @@ export default function Home() {
 
               {/* Preview fijo (aparece SOLO al hacer hover en la sección) */}
               <div className="mt-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="relative w-[300px] h-[300px] rounded-[28px] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.18)] bg-[#e7ecec]">
+                <div className="relative w-[400px] h-[400px] rounded-[28px] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.18)] bg-[#e7ecec]">
                   <img
                     src="/houses-preview.jpeg"
                     alt="Preview fija"
@@ -115,7 +118,7 @@ export default function Home() {
             </div>
 
             {/* CENTRO: texto que SOLO aparece en hover */}
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center h-[760px] text-center">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center w-[350px] h-[1060px] text-center">
               <div className="text-black/70" style={{ fontFamily: "serif" }}>
                 Maison Crivela
               </div>
@@ -134,10 +137,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* EDIFICIOS Y OFICINAS */}
+      <ParallaxCardsSection />
 
       {/* SECCIÓN TERRENOS */}
       <section className="bg-[#e7ecec] py-32">
-        <div className="mx-auto max-w-[1400px] px-16">
+        <div className="mx-auto max-w-[1800px] px-16">
           <div className="grid grid-cols-[360px_760px_320px] gap-x-16 items-start">
             {/* Izquierda */}
             <div className="pt-6">
@@ -169,6 +174,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* SECCION CONTACTOS */}
+      <ContactSection />
+
     </main>
   );
 }

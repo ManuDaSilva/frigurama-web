@@ -34,7 +34,7 @@ const STEPS: { key: StepKey; label: string }[] = [
 function clsx(...xs: (string | false | null | undefined)[]) {
   return xs.filter(Boolean).join(" ");
 }
-const STORAGE_KEY = "listing-wizard-v1";
+const STORAGE_KEY = "listing-wizard-v2";
 
 const hotWaterTypes = [
   "Gas natural",
@@ -106,7 +106,7 @@ type PropertyCondition = "nuevo" | "buen-estado" | "reformado" | "a-reformar";
 type FormState = {
   type?:
     | "Piso"
-    | "Ático"
+    | "Atico"
     | "Chalet"
     | "Adosado"
     | "Estudio"
@@ -457,7 +457,7 @@ function StepTipologiaButtons({
     icon: string;
   }> = [
     { key: "Piso", label: "Piso", icon: "🏢" },
-    { key: "Ático", label: "Ático", icon: "🏙️" },
+    { key: "Atico", label: "Ático", icon: "🏙️" },
     { key: "Chalet", label: "Chalet", icon: "🏠" },
     { key: "Adosado", label: "Adosado", icon: "🏘️" },
     { key: "Estudio", label: "Estudio", icon: "🛋️" },

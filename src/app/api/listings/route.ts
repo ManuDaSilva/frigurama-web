@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import type { Operation, PropertyType, Listing } from "@prisma/client";
+import { getSession } from "@/lib/auth";
+import type { Operation, PropertyType, EnergyStatus, Listing } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,7 @@ type Body = {
   coverUrl?: string;
 
   // ENERGÍA
+  energyStatus?: string;
   energyLabel?: string;
   energyConsumption?: number | string;
   energyEmissions?: number | string;
@@ -68,14 +70,43 @@ function mapOperation(x?: string): Operation {
   return (["venta", "alquiler", "compartir"].includes(k) ? k : "venta") as Operation;
 }
 
+function mapEnergyStatus(x?: string): EnergyStatus | null {
+  if (x === "tiene" || x === "tramite" || x === "exento") return x;
+  return null;
+}
+
 function mapPropertyType(x?: string): PropertyType {
-  const list = ["Piso", "Casa", "Chalet", "Atico", "Estudio", "Local", "Parcela", "Otro"] as const;
+  const list = ["Piso", "Atico", "Chalet", "Adosado", "Estudio", "Local", "Garaje", "Terreno"] as const;
   return list.includes(x as any) ? (x as PropertyType) : "Piso";
 }
 
 export async function POST(req: Request) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+  }
+
   try {
     const body = (await req.json()) as Body;
+
+    const price = toNum(body.price);
+    const areaM2 = toNum(body.areaM2);
+
+    const errors: string[] = [];
+    if (!price || price <= 0)
+      errors.push("El precio es obligatorio y debe ser mayor que 0.");
+    if (!toStr(body.title))
+      errors.push("El título es obligatorio.");
+    if (!toStr(body.city))
+      errors.push("La ciudad es obligatoria.");
+    if (!areaM2 || areaM2 <= 0)
+      errors.push("La superficie (m²) es obligatoria y debe ser mayor que 0.");
+    if (!toStr(body.contactEmail) && !toStr(body.contactPhone))
+      errors.push("Indica al menos un email o teléfono de contacto.");
+
+    if (errors.length > 0) {
+      return NextResponse.json({ errors }, { status: 400 });
+    }
 
     const data = {
       title: toStr(body.title) ?? "Sin título",
@@ -92,9 +123,9 @@ export async function POST(req: Request) {
       lat: toNum(body.lat),
       lng: toNum(body.lng),
 
-      // DATOS
-      price: toNum(body.price) ?? 0,
-      areaM2: toNum(body.areaM2),
+      // DATOS (validation above guarantees these are non-null positive numbers)
+      price: price as number,
+      areaM2: areaM2 as number,
       bedrooms: toNum(body.bedrooms),
       bathrooms: toNum(body.bathrooms),
       yearBuilt: toNum(body.yearBuilt),
@@ -111,6 +142,7 @@ export async function POST(req: Request) {
       contactPhone: toStr(body.contactPhone),
 
       // ENERGÍA
+      energyStatus: mapEnergyStatus(body.energyStatus),
       energyLabel: body.energyLabel ?? null,
       energyConsumption: toNum(body.energyConsumption),
       energyEmissions: toNum(body.energyEmissions),

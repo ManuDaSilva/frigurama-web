@@ -15,15 +15,28 @@ enum Operation {
   compartir
 }
 
+enum ListingStatus {
+  activo
+  oculto
+  vendido
+  alquilado
+}
+
+enum EnergyStatus {
+  tiene
+  tramite
+  exento
+}
+
 enum PropertyType {
   Piso
-  Casa
-  Chalet
   Atico
+  Chalet
+  Adosado
   Estudio
   Local
-  Parcela
-  Otro
+  Garaje
+  Terreno
 }
 
 model Listing {
@@ -50,6 +63,9 @@ model Listing {
   areaM2      Int?
   yearBuilt   Int?
 
+  // Estado y visibilidad
+  status      ListingStatus @default(activo)
+
   // Operación
   operation   Operation? @default(venta)
 
@@ -61,6 +77,7 @@ model Listing {
   images      Image[]
 
   // Energía
+  energyStatus       EnergyStatus?
   energyLabel        String?
   energyConsumption  Int?
   energyEmissions    Int?
@@ -81,11 +98,23 @@ model Listing {
   @@index([areaM2])
 }
 
+enum UserRole {
+  admin
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(admin)
+  createdAt    DateTime @default(now())
+}
+
 model Image {
   id         String   @id @default(cuid())
   url        String
   listingId  String
-  listing    Listing  @relation(fields: [listingId], references: [id])
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
 }
 

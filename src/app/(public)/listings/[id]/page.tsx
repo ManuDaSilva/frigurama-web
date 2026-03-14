@@ -1,6 +1,8 @@
 // src/app/listings/[id]/page.tsx
 import Link from "next/link";
 import Image from "next/image";
+import { notFound } from "next/navigation";
+import ListingGallery from "@/components/ListingGallery";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 
@@ -28,7 +30,7 @@ export async function generateMetadata(
     },
   });
 
-  if (!listing) return { title: "Inmueble no encontrado" };
+  if (!listing) notFound();
 
   const location = (listing as any).address ?? listing.city ?? "";
   const title = `${listing.title} ${location ? `– ${location}` : ""}`.trim();
@@ -188,16 +190,7 @@ export default async function ListingDetail({
     include: { images: true },
   });
 
-  if (!listing) {
-    return (
-      <main className="max-w-4xl mx-auto p-6">
-        <p className="mb-4">Inmueble no encontrado.</p>
-        <Link href="/listings" className="text-blue-600 underline">
-          ← Volver al listado
-        </Link>
-      </main>
-    );
-  }
+  if (!listing) notFound();
 
   const priceStr = new Intl.NumberFormat("es-ES", {
     style: "currency",
@@ -233,10 +226,16 @@ export default async function ListingDetail({
 
   return (
     <main className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* Volver */}
-      <div>
-        <Link href="/listings" className="text-blue-600 underline">
+      {/* Volver / Editar */}
+      <div className="flex items-center justify-between">
+        <Link href="/listings" className="text-blue-600 underline text-sm">
           ← Volver
+        </Link>
+        <Link
+          href={`/listings/${listing.id}/edit`}
+          className="text-sm border rounded px-3 py-1 hover:bg-gray-50"
+        >
+          Editar
         </Link>
       </div>
 
@@ -250,23 +249,11 @@ export default async function ListingDetail({
       </header>
 
       {/* Galería */}
-      {listing.images?.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {listing.images.slice(0, 3).map((img) => (
-            <div
-              key={img.id}
-              className="relative w-full h-40 md:h-56 rounded overflow-hidden"
-            >
-              <Image
-                src={img.url}
-                alt={listing.title ?? "Foto del inmueble"}
-                fill
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      <ListingGallery
+        images={listing.images.map((img) => ({ id: img.id, url: img.url }))}
+        coverUrl={listing.coverUrl}
+        title={listing.title ?? ""}
+      />
 
 
       {/* Datos básicos + contacto */}
@@ -280,7 +267,7 @@ export default async function ListingDetail({
         </div>
           <div className="pt-2">
             <Link
-              href={`mailto:info@tudominio.com?subject=Interés en ${encodeURIComponent(
+              href={`mailto:${listing.contactEmail ?? "info@frigurama.com"}?subject=Interés en ${encodeURIComponent(
                 listing.title ?? ""
               )}`}
               className="inline-block bg-black text-white px-4 py-2 rounded"
@@ -318,11 +305,26 @@ export default async function ListingDetail({
       )}
 
       {/* Certificado energético */}
-      <EnergyBadge
-        label={listing.energyLabel}
-        consumption={listing.energyConsumption}
-        emissions={listing.energyEmissions}
-      />
+      {listing.energyStatus === "tramite" && (
+        <section className="space-y-1">
+          <h2 className="text-2xl font-semibold">Certificado energético</h2>
+          <p className="text-gray-600">En trámite</p>
+        </section>
+      )}
+      {listing.energyStatus === "exento" && (
+        <section className="space-y-1">
+          <h2 className="text-2xl font-semibold">Certificado energético</h2>
+          <p className="text-gray-600">Exento</p>
+        </section>
+      )}
+      {(listing.energyStatus === "tiene" || listing.energyStatus === null) &&
+        listing.energyLabel && (
+          <EnergyBadge
+            label={listing.energyLabel}
+            consumption={listing.energyConsumption}
+            emissions={listing.energyEmissions}
+          />
+        )}
 
       {/* Información del precio */}
       <section className="space-y-1">

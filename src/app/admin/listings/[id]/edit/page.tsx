@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import EditListingForm, {
@@ -59,14 +60,24 @@ export default async function AdminEditListingPage({
         <h1 className="text-2xl font-bold">
           {listing.title ?? <span className="text-gray-400 italic font-normal">Sin título</span>}
         </h1>
-        <a
-          href={`/listings/${listing.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-gray-500 hover:text-black underline underline-offset-2 transition-colors"
-        >
-          Ver pública ↗
-        </a>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/admin/listings"
+            className="text-sm text-gray-500 hover:text-black transition-colors"
+          >
+            ← Inmuebles
+          </Link>
+          {listing.status === "activo" && (
+            <a
+              href={`/listings/${listing.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-500 hover:text-black underline underline-offset-2 transition-colors"
+            >
+              Ver pública ↗
+            </a>
+          )}
+        </div>
       </div>
       <EditListingForm
         initial={initial}

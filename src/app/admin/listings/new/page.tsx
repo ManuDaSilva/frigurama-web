@@ -1,3 +1,4 @@
+import Link from "next/link";
 import EditListingForm, {
   type InitialData,
 } from "@/app/(public)/listings/[id]/edit/EditListingForm";
@@ -40,7 +41,15 @@ const EMPTY: InitialData = {
 export default function AdminNewListingPage() {
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Nuevo inmueble</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Nuevo inmueble</h1>
+        <Link
+          href="/admin/listings"
+          className="text-sm text-gray-500 hover:text-black transition-colors"
+        >
+          ← Inmuebles
+        </Link>
+      </div>
       <EditListingForm
         initial={EMPTY}
         mode="create"

@@ -17,31 +17,29 @@ export default function GoogleMap({ lat, lng, address, onChange }: Props) {
     if (!mapRef.current) return;
 
     async function init() {
-      // 1. Definir configuración API (Next.js ya carga el script)
-      // @ts-ignore
-      google.maps.importLibrary;
+      // Guard: google must be available (script loaded via afterInteractive)
+      if (typeof google === "undefined" || !google.maps?.importLibrary) return;
 
-      // 2. Importar librerías necesarias
+      // Import only the libraries needed
       const { Map } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
-      const { Marker } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
       const { Geocoder } = (await google.maps.importLibrary("geocoding")) as google.maps.GeocodingLibrary;
-      const { PlacesService, Autocomplete } = (await google.maps.importLibrary("places")) as any;
+      await google.maps.importLibrary("places"); // loads Autocomplete into global
 
-      // 3. Posición inicial (si no tienes valores aún)
+      // Initial position
       const center = {
         lat: lat ?? 41.387,
         lng: lng ?? 2.17,
       };
 
-      // 4. Crear mapa
+      // Create map
       const map = new Map(mapRef.current!, {
         center,
         zoom: 15,
         streetViewControl: false,
       });
 
-      // 5. Crear marcador
-      const marker = new Marker({
+      // Create marker using the classic global (compatible without a Map ID)
+      const marker = new google.maps.Marker({
         position: center,
         map,
         draggable: true,
@@ -51,7 +49,7 @@ export default function GoogleMap({ lat, lng, address, onChange }: Props) {
 
       // =============== AUTOCOMPLETE (BUSCADOR) ===============
       if (inputRef.current) {
-        const auto = new Autocomplete(inputRef.current, {
+        const auto = new google.maps.places.Autocomplete(inputRef.current, {
           fields: ["geometry", "formatted_address"],
         });
 

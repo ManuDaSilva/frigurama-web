@@ -27,8 +27,8 @@ export default function RootLayout({
     <html lang="es">
       <head>
         <Script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places`}
-          strategy="beforeInteractive"
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&loading=async`}
+          strategy="afterInteractive"
         />
         <Script
           src="https://widget.cloudinary.com/v2.0/global/all.js"

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { ListingStatus } from "@prisma/client";
+import AdminListingActions from "./AdminListingActions";
 
 export const dynamic = "force-dynamic";
 
@@ -23,16 +24,29 @@ const ALL_STATUSES = Object.keys(STATUS_CONFIG) as ListingStatus[];
 export default async function AdminListingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; q?: string }>;
 }) {
   const sp = await searchParams;
   const rawStatus = sp.status as string | undefined;
   const statusFilter = ALL_STATUSES.includes(rawStatus as ListingStatus)
     ? (rawStatus as ListingStatus)
     : undefined;
+  const q = (sp.q as string | undefined)?.trim() || undefined;
+
+  const where = {
+    ...(statusFilter ? { status: statusFilter } : {}),
+    ...(q
+      ? {
+          OR: [
+            { title: { contains: q, mode: "insensitive" as const } },
+            { city:  { contains: q, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
 
   const listings = await prisma.listing.findMany({
-    where: statusFilter ? { status: statusFilter } : {},
+    where,
     orderBy: { updatedAt: "desc" },
     select: {
       id: true,
@@ -60,10 +74,38 @@ export default async function AdminListingsPage({
         </Link>
       </div>
 
+      {/* ── Search ── */}
+      <form method="GET" action="/admin/listings" className="flex gap-2">
+        {statusFilter && (
+          <input type="hidden" name="status" value={statusFilter} />
+        )}
+        <input
+          name="q"
+          type="search"
+          defaultValue={q ?? ""}
+          placeholder="Buscar por título o ciudad…"
+          className="flex-1 text-sm border rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-black"
+        />
+        <button
+          type="submit"
+          className="text-sm border rounded-lg px-3 py-1.5 bg-white hover:bg-gray-50 transition-colors"
+        >
+          Buscar
+        </button>
+        {q && (
+          <Link
+            href={statusFilter ? `/admin/listings?status=${statusFilter}` : "/admin/listings"}
+            className="text-sm border rounded-lg px-3 py-1.5 bg-white hover:bg-gray-50 transition-colors text-gray-500"
+          >
+            Limpiar
+          </Link>
+        )}
+      </form>
+
       {/* ── Status filter tabs ── */}
       <div className="flex flex-wrap gap-2 text-sm">
         <Link
-          href="/admin/listings"
+          href={q ? `/admin/listings?q=${encodeURIComponent(q)}` : "/admin/listings"}
           className={`px-3 py-1.5 rounded-lg border transition-colors ${
             !statusFilter
               ? "bg-black text-white border-black"
@@ -72,25 +114,38 @@ export default async function AdminListingsPage({
         >
           Todos
         </Link>
-        {ALL_STATUSES.map((s) => (
-          <Link
-            key={s}
-            href={`/admin/listings?status=${s}`}
-            className={`px-3 py-1.5 rounded-lg border transition-colors ${
-              statusFilter === s
-                ? "bg-black text-white border-black"
-                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
-            }`}
-          >
-            {STATUS_CONFIG[s].label}
-          </Link>
-        ))}
+        {ALL_STATUSES.map((s) => {
+          const href = q
+            ? `/admin/listings?status=${s}&q=${encodeURIComponent(q)}`
+            : `/admin/listings?status=${s}`;
+          return (
+            <Link
+              key={s}
+              href={href}
+              className={`px-3 py-1.5 rounded-lg border transition-colors ${
+                statusFilter === s
+                  ? "bg-black text-white border-black"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {STATUS_CONFIG[s].label}
+            </Link>
+          );
+        })}
       </div>
+
+      {/* ── Result count ── */}
+      <p className="text-xs text-gray-400">
+        {listings.length === 1 ? "1 inmueble" : `${listings.length} inmuebles`}
+        {statusFilter ? ` · ${STATUS_CONFIG[statusFilter].label}` : ""}
+        {q ? ` · "${q}"` : ""}
+      </p>
 
       {/* ── Table ── */}
       {listings.length === 0 ? (
         <p className="text-sm text-gray-500 py-12 text-center">
-          No hay inmuebles{statusFilter ? ` con estado "${STATUS_CONFIG[statusFilter].label}"` : ""}.
+          No hay inmuebles{statusFilter ? ` con estado "${STATUS_CONFIG[statusFilter].label}"` : ""}
+          {q ? ` que coincidan con "${q}"` : ""}.
         </p>
       ) : (
         <div className="rounded-xl border bg-white overflow-hidden">
@@ -103,7 +158,7 @@ export default async function AdminListingsPage({
                 <th className="px-4 py-3">Precio</th>
                 <th className="px-4 py-3">Estado</th>
                 <th className="px-4 py-3 hidden lg:table-cell">Actualizado</th>
-                <th className="px-4 py-3 sr-only">Acciones</th>
+                <th className="px-4 py-3 text-right sr-only">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -136,12 +191,12 @@ export default async function AdminListingsPage({
                     })}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/admin/listings/${l.id}/edit`}
-                      className="text-sm text-gray-600 hover:text-black underline underline-offset-2 transition-colors"
-                    >
-                      Editar
-                    </Link>
+                    <AdminListingActions
+                      id={l.id}
+                      status={l.status}
+                      title={l.title}
+                      isPublic={l.status === "activo"}
+                    />
                   </td>
                 </tr>
               ))}

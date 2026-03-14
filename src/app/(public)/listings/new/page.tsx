@@ -100,7 +100,7 @@ const seguridad = [
 ] as const;
 
 type EnergyStatus = "tiene" | "tramite" | "exento";
-type Operation = "venta" | "alquiler" | "compartir";
+type Operation = "venta" | "alquiler";
 type PropertyCondition = "nuevo" | "buen-estado" | "reformado" | "a-reformar";
 
 type FormState = {
@@ -240,7 +240,7 @@ export default function NewListingWizardPage() {
         if (!form.address) return "Indica una dirección (puedes usar el mapa).";
         return null;
       case "precio":
-        if (!form.operation) return "Selecciona Vender / Alquilar / Compartir.";
+        if (!form.operation) return "Selecciona Vender o Alquilar.";
         if (!form.price || form.price <= 0) return "Indica un precio válido.";
         return null;
       case "datos":
@@ -574,7 +574,6 @@ function StepPrecio({
   const ops: Array<{ key: Operation; label: string; img: string }> = [
     { key: "venta", label: "Vender", img: "/ops/venta.png" },
     { key: "alquiler", label: "Alquilar", img: "/ops/alquiler.png" },
-    { key: "compartir", label: "Compartir", img: "/ops/compartir.png" },
   ];
 
   const isRent = form.operation === "alquiler";

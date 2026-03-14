@@ -7,7 +7,7 @@ import ImageUploader from "@/components/ImageUploader";
 /* ── Types ─────────────────────────────────────────────── */
 
 type ListingStatus = "activo" | "oculto" | "vendido" | "alquilado";
-type Operation     = "venta" | "alquiler" | "compartir";
+type Operation     = "venta" | "alquiler";
 type PropertyType  =
   | "Piso" | "Atico" | "Chalet" | "Adosado"
   | "Estudio" | "Local" | "Garaje" | "Terreno";
@@ -469,7 +469,6 @@ export default function EditListingForm({
             >
               <option value="venta">Venta</option>
               <option value="alquiler">Alquiler</option>
-              <option value="compartir">Compartir</option>
             </select>
           </Field>
           <Field label="Precio (€)" required>

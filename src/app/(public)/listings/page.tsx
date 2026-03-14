@@ -101,12 +101,7 @@ export default async function ListingsPage({
 
   return (
     <main className="max-w-5xl mx-auto p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Inmuebles en venta</h1>
-        <Link href="/listings/new" className="bg-black text-white px-3 py-2 rounded">
-          Nuevo
-        </Link>
-      </div>
+      <h1 className="text-3xl font-bold mb-6">Inmuebles en venta</h1>
 
       {/* ====== Filtros (GET) ====== */}
       <form className="grid md:grid-cols-8 gap-3 mb-6" method="GET">

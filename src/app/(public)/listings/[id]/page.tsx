@@ -14,15 +14,15 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await params;
 
-  const listing = await prisma.listing.findUnique({
-    where: { id },
+  const listing = await prisma.listing.findFirst({
+    where: { id, status: "activo" },
     select: {
       title: true,
       description: true,
       coverUrl: true,
       price: true,
       city: true,
-      address: true as any, // si no tienes address, puedes quitar esta línea
+      address: true as any,
       operation: true,
       energyLabel: true,
       energyConsumption: true,
@@ -43,11 +43,15 @@ export async function generateMetadata(
         }).format(listing.price)
       : "";
 
+  const opLabel =
+    listing.operation === "alquiler" ? "Alquiler" :
+    listing.operation === "venta"    ? "Venta"    : null;
+
   const description =
     listing.description ??
     `Inmueble en ${location || "España"}${
       priceStr ? ` por ${priceStr}` : ""
-    }${listing.operation ? ` (${listing.operation})` : ""}`;
+    }${opLabel ? ` (${opLabel})` : ""}`;
 
   return {
     title,
@@ -63,6 +67,103 @@ export async function generateMetadata(
 }
 
 /* ---------- Componente etiqueta energética ---------- */
+
+const ENERGY_COLORS = [
+  "#00b050", // A
+  "#92d050", // B
+  "#c8d40c", // C
+  "#ffd700", // D
+  "#ffa500", // E
+  "#ed7d31", // F
+  "#e00000", // G
+] as const;
+
+const GRADES = ["A", "B", "C", "D", "E", "F", "G"] as const;
+
+function EnergyScale({
+  title,
+  unit,
+  value,
+  activeGrade,
+}: {
+  title: string;
+  unit: string;
+  value: number | null;
+  activeGrade: string;
+}) {
+  const BAR_MIN     = 46;
+  const BAR_STEP    = 13;
+  const ARROW_TIP   = 10;
+  const ROW_H       = 26;
+  const ROW_GAP     = 2;
+  const ROW_STRIDE  = ROW_H + ROW_GAP;
+  const CALLOUT_W   = 78;
+  const CALLOUT_GAP = 3;
+  const SVG_W       = 236;
+  const SVG_H       = GRADES.length * ROW_STRIDE - ROW_GAP;
+
+  const active = activeGrade.trim().toUpperCase();
+
+  return (
+    <div className="flex flex-col gap-1 min-w-0">
+      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide leading-tight">
+        {title}
+      </p>
+      <svg
+        width={SVG_W}
+        height={SVG_H}
+        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        className="max-w-full"
+        aria-label={title}
+        role="img"
+      >
+        {GRADES.map((g, i) => {
+          const barW     = BAR_MIN + i * BAR_STEP;
+          const tipX     = barW + ARROW_TIP;
+          const yTop     = i * ROW_STRIDE;
+          const yMid     = yTop + ROW_H / 2;
+          const yBot     = yTop + ROW_H;
+          const isActive = g === active;
+          const pts      = `0,${yTop} ${barW},${yTop} ${tipX},${yMid} ${barW},${yBot} 0,${yBot}`;
+          const callX    = tipX + CALLOUT_GAP;
+
+          return (
+            <g key={g}>
+              <polygon points={pts} fill={ENERGY_COLORS[i]} />
+              <text x={9} y={yMid + 4} fontSize={11} fontWeight="700" fill="#fff">
+                {g}
+              </text>
+              {isActive && (
+                <>
+                  <rect
+                    x={callX}
+                    y={yTop + 1}
+                    width={CALLOUT_W}
+                    height={ROW_H - 2}
+                    rx={2}
+                    fill="#1a1a1a"
+                  />
+                  <text
+                    x={callX + CALLOUT_W / 2}
+                    y={yMid + 4}
+                    fontSize={11}
+                    fontWeight="700"
+                    fill="#fff"
+                    textAnchor="middle"
+                  >
+                    {value !== null ? value : "—"}
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+      <p className="text-[11px] text-gray-400 leading-tight">{unit}</p>
+    </div>
+  );
+}
+
 function EnergyBadge({
   label,
   consumption,
@@ -72,106 +173,30 @@ function EnergyBadge({
   consumption?: number | string | null;
   emissions?: number | string | null;
 }) {
-  const grades = ["A", "B", "C", "D", "E", "F", "G"] as const;
-  const active = (label ?? "").toString().trim().toUpperCase();
+  const activeGrade = (label ?? "").toString().trim().toUpperCase();
   const cons =
     consumption === null || consumption === undefined || consumption === ""
-      ? null
-      : Number(consumption);
+      ? null : Number(consumption);
   const emis =
     emissions === null || emissions === undefined || emissions === ""
-      ? null
-      : Number(emissions);
-
-  const colors = [
-    "#00b050",
-    "#92d050",
-    "#ffd965",
-    "#ffc000",
-    "#ed7d31",
-    "#c55a11",
-    "#ff0000",
-  ];
+      ? null : Number(emissions);
 
   return (
-    <section className="space-y-3 border rounded p-4">
-      <h2 className="text-2xl font-semibold">
-        Ver etiqueta calificación energética
-      </h2>
-
-      <div className="flex gap-6 flex-col sm:flex-row items-start">
-        {/* Semáforo */}
-        <svg
-          width="280"
-          height="160"
-          viewBox="0 0 280 160"
-          className="shrink-0 border rounded"
-        >
-          {grades.map((g, i) => {
-            const y = 10 + i * 22;
-            const isActive = g === active;
-            return (
-              <g key={g}>
-                <rect x="10" y={y} width="140" height="18" rx="3" fill={colors[i]} />
-                <text
-                  x="18"
-                  y={y + 13}
-                  fontSize="12"
-                  fill="#fff"
-                  fontWeight="700"
-                >
-                  {g}
-                </text>
-                {isActive && (
-                  <g>
-                    <rect
-                      x="160"
-                      y={y - 2}
-                      width="105"
-                      height="22"
-                      rx="3"
-                      fill="#000"
-                      opacity="0.85"
-                    />
-                    <text
-                      x="170"
-                      y={y + 13}
-                      fontSize="12"
-                      fill="#fff"
-                      fontWeight="700"
-                    >
-                      {cons ?? "—"}
-                      {cons !== null && emis !== null ? "  |  " : "  "}
-                      {emis ?? "—"}
-                    </text>
-                  </g>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-
-        {/* Valores numéricos */}
-        <div className="text-sm grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-500">Consumo de energía</p>
-            <p className="text-lg font-semibold">
-              {cons ?? "—"}{" "}
-              <span className="text-gray-500 text-sm">kWh/m²·año</span>
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-500">Emisiones</p>
-            <p className="text-lg font-semibold">
-              {emis ?? "—"}{" "}
-              <span className="text-gray-500 text-sm">kg CO₂/m²·año</span>
-            </p>
-          </div>
-          <div className="col-span-2">
-            <p className="text-gray-500">Calificación</p>
-            <p className="text-lg font-semibold">{active || "—"}</p>
-          </div>
-        </div>
+    <section className="space-y-4 border rounded-lg p-5">
+      <h2 className="text-2xl font-semibold">Calificación energética</h2>
+      <div className="flex flex-col sm:flex-row gap-6">
+        <EnergyScale
+          title="Consumo de energía primaria"
+          unit="kWh/m²·año"
+          value={cons}
+          activeGrade={activeGrade}
+        />
+        <EnergyScale
+          title="Emisiones de CO₂"
+          unit="kg CO₂/m²·año"
+          value={emis}
+          activeGrade={activeGrade}
+        />
       </div>
     </section>
   );
@@ -185,8 +210,8 @@ export default async function ListingDetail({
 }) {
   const { id } = await params;
 
-  const listing = await prisma.listing.findUnique({
-    where: { id },
+  const listing = await prisma.listing.findFirst({
+    where: { id, status: "activo" },
     include: { images: true },
   });
 
@@ -226,18 +251,10 @@ export default async function ListingDetail({
 
   return (
     <main className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* Volver / Editar */}
-      <div className="flex items-center justify-between">
-        <Link href="/listings" className="text-blue-600 underline text-sm">
-          ← Volver
-        </Link>
-        <Link
-          href={`/listings/${listing.id}/edit`}
-          className="text-sm border rounded px-3 py-1 hover:bg-gray-50"
-        >
-          Editar
-        </Link>
-      </div>
+      {/* Volver */}
+      <Link href="/listings" className="text-blue-600 underline text-sm">
+        ← Volver
+      </Link>
 
       {/* Cabecera */}
       <header className="space-y-2">

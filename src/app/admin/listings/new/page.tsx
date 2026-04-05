@@ -3,11 +3,12 @@ import EditListingForm, {
   type InitialData,
 } from "@/app/(public)/listings/[id]/edit/EditListingForm";
 
-export const metadata = { title: "Nuevo inmueble — Admin Rigurama" };
+export const metadata = { title: "Nuevo inmueble — Admin Frigurama" };
 
 const EMPTY: InitialData = {
   id:                null,
   status:            "activo",
+  published:         true,
   title:             null,
   description:       null,
   address:           null,
@@ -26,10 +27,11 @@ const EMPTY: InitialData = {
   yearBuilt:         null,
   bedrooms:          null,
   bathrooms:         null,
-  energyStatus:      null,
-  energyLabel:       null,
-  energyConsumption: null,
-  energyEmissions:   null,
+  energyStatus:           null,
+  energyConsumption:      null,
+  energyConsumptionLabel: null,
+  energyEmissions:        null,
+  energyEmissionsLabel:   null,
   reference:         null,
   contactEmail:      null,
   contactPhone:      null,

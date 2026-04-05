@@ -39,9 +39,10 @@ type Body = {
 
   // ENERGÍA
   energyStatus?: string;
-  energyLabel?: string;
   energyConsumption?: number | string;
+  energyConsumptionLabel?: string;
   energyEmissions?: number | string;
+  energyEmissionsLabel?: string;
 
   // CONTACTO
   reference?: string;
@@ -50,6 +51,9 @@ type Body = {
 
   // OPERACIÓN
   operation?: string;
+
+  // VISIBILIDAD
+  published?: boolean;
 };
 
 
@@ -111,6 +115,7 @@ export async function POST(req: Request) {
     const data = {
       title: toStr(body.title) ?? "Sin título",
       description: toStr(body.description),
+      published: Boolean(body.published ?? true),
 
       type: mapPropertyType(body.type),
       operation: mapOperation(body.operation),
@@ -143,9 +148,10 @@ export async function POST(req: Request) {
 
       // ENERGÍA
       energyStatus: mapEnergyStatus(body.energyStatus),
-      energyLabel: body.energyLabel ?? null,
       energyConsumption: toNum(body.energyConsumption),
+      energyConsumptionLabel: toStr(body.energyConsumptionLabel),
       energyEmissions: toNum(body.energyEmissions),
+      energyEmissionsLabel: toStr(body.energyEmissionsLabel),
     };
 
     const images = (body.images ?? []).filter(Boolean).map(String);

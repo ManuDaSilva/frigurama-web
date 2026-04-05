@@ -159,6 +159,7 @@ type FormState = {
   reference?: string;
   contactEmail?: string;
   contactPhone?: string;
+  published: boolean;
 };
 
 const EMPTY: FormState = {
@@ -197,6 +198,7 @@ const EMPTY: FormState = {
     terrazaM2: null,
   },
 
+  published: true,
   images: [],
 };
 
@@ -302,7 +304,7 @@ export default function NewListingWizardPage() {
       }
       localStorage.removeItem(STORAGE_KEY);
       const data = await res.json();
-      router.replace(`/listings/${data.id}`);
+      router.replace(`/admin/listings/${data.id}/edit`);
     } catch (e: any) {
       alert(e.message || "Error publicando");
     } finally {
@@ -316,7 +318,7 @@ export default function NewListingWizardPage() {
       <div>
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Publicar inmueble</h1>
-          <Link href="/listings" className="text-blue-600 underline">
+          <Link href="/listings" className="text-sm text-gray-500 hover:text-black transition-colors">
             ← Volver
           </Link>
         </div>
@@ -492,9 +494,6 @@ function StepTipologiaButtons({
           );
         })}
       </div>
-      <p className="text-sm text-gray-500">
-        * El diseñador podrá sustituir estos iconos por imágenes SVG.
-      </p>
     </div>
   );
 }
@@ -1185,11 +1184,24 @@ function StepRevision({
         </div>
       </div>
 
-      <div className="border rounded p-4">
-        <h3 className="font-medium mb-2">Resumen</h3>
-        <pre className="text-xs bg-gray-50 p-3 rounded overflow-auto max-h-64">
-          {JSON.stringify(form, null, 2)}
-        </pre>
+      <div className="flex items-center gap-2 pt-2">
+        <input
+          type="checkbox"
+          id="wizard-published"
+          checked={!!form.published}
+          onChange={(e) =>
+            setForm((f: FormState) => ({ ...f, published: e.target.checked }))
+          }
+          className="h-4 w-4"
+        />
+        <label htmlFor="wizard-published" className="text-sm">
+          Publicado en la web
+          <span className="ml-1.5 text-gray-400 font-normal">
+            {form.published
+              ? "— visible en el catálogo público"
+              : "— no aparece en el catálogo público"}
+          </span>
+        </label>
       </div>
     </div>
   );

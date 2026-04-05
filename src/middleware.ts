@@ -23,7 +23,18 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   if (!token) return redirectToLogin(req);
 
   try {
-    await jwtVerify(token, getSecret());
+    const { payload } = await jwtVerify(token, getSecret());
+
+    // /admin/users is superadmin-only
+    if (
+      req.nextUrl.pathname.startsWith("/admin/users") &&
+      payload.role !== "superadmin"
+    ) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/admin";
+      return NextResponse.redirect(url);
+    }
+
     return NextResponse.next();
   } catch {
     return redirectToLogin(req);

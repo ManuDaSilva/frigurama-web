@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import type { ListingStatus } from "@prisma/client";
 import AdminListingActions from "./AdminListingActions";
@@ -54,9 +55,11 @@ export default async function AdminListingsPage({
       city: true,
       price: true,
       status: true,
+      published: true,
       type: true,
       operation: true,
       updatedAt: true,
+      coverUrl: true,
     },
   });
 
@@ -164,8 +167,23 @@ export default async function AdminListingsPage({
             <tbody className="divide-y divide-gray-100">
               {listings.map((l) => (
                 <tr key={l.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900 max-w-[220px] truncate">
-                    {l.title ?? <span className="text-gray-400 italic">Sin título</span>}
+                  <td className="px-4 py-2">
+                    <div className="flex items-center gap-5">
+                      <div className="relative shrink-0 w-60 h-60 rounded-lg overflow-hidden bg-gray-200">
+                        {l.coverUrl && (
+                          <Image
+                            src={l.coverUrl}
+                            alt=""
+                            fill
+                            sizes="360px"
+                            className="object-cover"
+                          />
+                        )}
+                      </div>
+                      <span className="font-medium text-gray-900 truncate max-w-[160px]">
+                        {l.title ?? <span className="text-gray-400 italic font-normal">Sin título</span>}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-gray-600 hidden sm:table-cell">
                     {l.city ?? "—"}
@@ -177,11 +195,22 @@ export default async function AdminListingsPage({
                     {l.price.toLocaleString("es-ES")} €
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_CONFIG[l.status].color}`}
-                    >
-                      {STATUS_CONFIG[l.status].label}
-                    </span>
+                    <div className="flex flex-col gap-1 items-start">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_CONFIG[l.status].color}`}
+                      >
+                        {STATUS_CONFIG[l.status].label}
+                      </span>
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                          l.published
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-orange-50 text-orange-600"
+                        }`}
+                      >
+                        {l.published ? "● Visible" : "○ Oculto"}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-gray-400 hidden lg:table-cell whitespace-nowrap">
                     {l.updatedAt.toLocaleDateString("es-ES", {
@@ -194,8 +223,9 @@ export default async function AdminListingsPage({
                     <AdminListingActions
                       id={l.id}
                       status={l.status}
+                      published={l.published}
                       title={l.title}
-                      isPublic={l.status === "activo"}
+                      isPublic={l.status === "activo" && l.published}
                     />
                   </td>
                 </tr>

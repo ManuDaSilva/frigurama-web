@@ -10,8 +10,9 @@ type Props = {
 };
 
 export default function GoogleMap({ lat, lng, address, onChange }: Props) {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const mapRef      = useRef<HTMLDivElement | null>(null);
+  const inputRef    = useRef<HTMLInputElement | null>(null);
+  const autoRef     = useRef<google.maps.places.Autocomplete | null>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -19,6 +20,9 @@ export default function GoogleMap({ lat, lng, address, onChange }: Props) {
     async function init() {
       // Guard: google must be available (script loaded via afterInteractive)
       if (typeof google === "undefined" || !google.maps?.importLibrary) return;
+
+      // Prevent double-initialization (React Strict Mode runs effects twice in dev)
+      if (autoRef.current) return;
 
       // Import only the libraries needed
       const { Map } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
@@ -49,12 +53,12 @@ export default function GoogleMap({ lat, lng, address, onChange }: Props) {
 
       // =============== AUTOCOMPLETE (BUSCADOR) ===============
       if (inputRef.current) {
-        const auto = new google.maps.places.Autocomplete(inputRef.current, {
+        autoRef.current = new google.maps.places.Autocomplete(inputRef.current, {
           fields: ["geometry", "formatted_address"],
         });
 
-        auto.addListener("place_changed", () => {
-          const place = auto.getPlace();
+        autoRef.current.addListener("place_changed", () => {
+          const place = autoRef.current!.getPlace();
           if (!place.geometry) return;
 
           const newLat = place.geometry.location?.lat()!;
@@ -94,6 +98,18 @@ export default function GoogleMap({ lat, lng, address, onChange }: Props) {
     }
 
     init();
+
+    // Cleanup: remove Autocomplete's global document listeners on unmount.
+    // Critical in React Strict Mode (dev), which runs effects twice —
+    // without this, a stale Autocomplete instance retains global keyboard
+    // listeners that steal focus from other inputs in the form.
+    return () => {
+      if (autoRef.current && typeof google !== "undefined") {
+        google.maps.event.clearInstanceListeners(autoRef.current);
+        // Do NOT reset autoRef.current — preserving it keeps the guard active
+        // across React Strict Mode's double-invocation of effects in development.
+      }
+    };
   }, [lat, lng]);
 
   return (

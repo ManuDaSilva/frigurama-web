@@ -15,6 +15,9 @@ declare global {
 
 export default function ImageUploader({ onUploaded, text = "Subir imágenes" }: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
+  // Stable ref so the effect never re-runs when the parent re-renders with a new callback reference
+  const onUploadedRef = useRef(onUploaded);
+  useEffect(() => { onUploadedRef.current = onUploaded; });
 
   useEffect(() => {
     if (!window.cloudinary) {
@@ -33,7 +36,7 @@ export default function ImageUploader({ onUploaded, text = "Subir imágenes" }: 
       },
       (error: any, result: any) => {
         if (!error && result && result.event === "success") {
-          onUploaded(result.info.secure_url);
+          onUploadedRef.current(result.info.secure_url);
         }
       }
     );
@@ -46,7 +49,7 @@ export default function ImageUploader({ onUploaded, text = "Subir imágenes" }: 
     return () => {
       button?.removeEventListener("click", open);
     };
-  }, [onUploaded]);
+  }, []);
 
   return (
     <button

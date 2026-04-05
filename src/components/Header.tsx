@@ -32,7 +32,7 @@ export default function Header() {
             href="/"
             className="relative z-10 text-white/85 text-[12px] tracking-[0.28em] uppercase"
           >
-            RIGURAMA
+            FRIGURAMA
           </Link>
 
           <nav className="relative z-10 flex items-center gap-12 text-white text-[12px] tracking-[0.20em] uppercase">

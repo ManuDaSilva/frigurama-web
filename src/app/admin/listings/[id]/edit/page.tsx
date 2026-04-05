@@ -24,6 +24,7 @@ export default async function AdminEditListingPage({
   const initial: InitialData = {
     id:                listing.id,
     status:            listing.status,
+    published:         listing.published,
     title:             listing.title,
     description:       listing.description,
     address:           listing.address,
@@ -42,10 +43,11 @@ export default async function AdminEditListingPage({
     yearBuilt:         listing.yearBuilt,
     bedrooms:          listing.bedrooms,
     bathrooms:         listing.bathrooms,
-    energyStatus:      listing.energyStatus,
-    energyLabel:       listing.energyLabel,
-    energyConsumption: listing.energyConsumption,
-    energyEmissions:   listing.energyEmissions,
+    energyStatus:           listing.energyStatus,
+    energyConsumption:      listing.energyConsumption,
+    energyConsumptionLabel: listing.energyConsumptionLabel,
+    energyEmissions:        listing.energyEmissions,
+    energyEmissionsLabel:   listing.energyEmissionsLabel,
     reference:         listing.reference,
     contactEmail:      listing.contactEmail,
     contactPhone:      listing.contactPhone,
@@ -67,7 +69,7 @@ export default async function AdminEditListingPage({
           >
             ← Inmuebles
           </Link>
-          {listing.status === "activo" && (
+          {listing.status === "activo" && listing.published && (
             <a
               href={`/listings/${listing.id}`}
               target="_blank"

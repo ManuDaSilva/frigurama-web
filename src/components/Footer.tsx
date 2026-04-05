@@ -13,28 +13,28 @@ export default function Footer() {
           className="
             relative
             w-full
-            h-[321px]
+            h-[220px]
             px-10
             rounded-tl-[64px]
             rounded-tr-[64px]
-            border border-black/10
-            shadow-[0_14px_36px_rgba(0,0,0,0.22)]
-            bg-[rgba(0,0,0,0.55)]
-            backdrop-blur-xl
+            border border-black/8
+            shadow-[0_8px_24px_rgba(0,0,0,0.14)]
+            bg-[rgba(0,0,0,0.42)]
+            backdrop-blur-md
             overflow-hidden
           "
         >
           {/* Brillo + viñeta (igual que header) */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute left-1/2 top-1/2 h-[140%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/14 blur-3xl" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06),rgba(0,0,0,0.45)_65%,rgba(0,0,0,0.65))]" />
+            <div className="absolute left-1/2 top-1/2 h-[140%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/8 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.04),rgba(0,0,0,0.35)_65%,rgba(0,0,0,0.52))]" />
           </div>
 
           {/* 3 columnas reales */}
           <div className="relative z-10 grid h-full grid-cols-[0.2fr_1fr_auto] items-center">
             {/* Bloque izquierdo: 2 subcolumnas pegadas */}
             <div className="flex items-start gap-16">
-              <div className="text-white/85 text-[24px] tracking-[0.36em] uppercase leading-8">
+              <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6">
                 <Link href="/company" className={linkBase}>
                   Company
                 </Link>
@@ -52,7 +52,7 @@ export default function Footer() {
                 </Link>
               </div>
 
-              <div className="text-white/85 text-[24px] tracking-[0.36em] uppercase leading-8">
+              <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6">
                 <Link href="/comunidad" className={linkBase}>
                   Comunidad
                 </Link>
@@ -63,7 +63,7 @@ export default function Footer() {
             </div>
 
             {/* Centro */}
-            <div className="text-white/85 text-[24px] tracking-[0.36em] uppercase leading-8 text-center justify-self-center">
+            <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6 text-center justify-self-center">
               <Link href="#" className={linkBase}>
                 08036. Muntaner, 0200
               </Link>
@@ -79,11 +79,11 @@ export default function Footer() {
             </div>
 
             {/* Derecha */}
-            <div className="justify-self-end text-right text-white/85">
-              <div className="text-[28px] tracking-[0.20em] transition-colors duration-300 ease-out hover:text-[#e67e22]">
+            <div className="justify-self-end text-right text-white/60">
+              <div className="text-[13px] tracking-[0.22em] uppercase transition-colors duration-300 ease-out hover:text-[#e67e22]">
                 Frigurama_SL
               </div>
-              <div className="mt-2 text-[24px] tracking-[0.36em] uppercase opacity-90">
+              <div className="mt-1.5 text-[12px] tracking-[0.22em] uppercase opacity-70">
                 © {new Date().getFullYear()}
               </div>
             </div>

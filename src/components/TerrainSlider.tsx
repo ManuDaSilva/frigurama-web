@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import React from "react";
 
 
-const THUMB_H = 360; // ajusta si quieres más/menos grande
+const THUMB_H = 575; // ajusta si quieres más/menos grande
 const GAP = 32;      // “aire” premium entre slides
 
 
@@ -102,7 +102,7 @@ export default function TerrainSlider() {
   };
 
 return (
-  <div className="grid grid-cols-[760px_320px] gap-x-16 items-start">
+  <div className="grid grid-cols-[800px_1fr] gap-x-16 items-start">
     {/* IMAGEN GRANDE (760x760) */}
     <div
       className="
@@ -126,7 +126,7 @@ return (
     </div>
 
     {/* DERECHA (SLIDER + TEXTO) */}
-    <div className="flex flex-col items-stretch justify-center h-full">
+    <div className="flex flex-col items-stretch justify-center h-full pr-10">
       {/* SOLO la miniatura visible (con recorte) */}
       <div className="rounded-[24px] overflow-hidden">
         <div

@@ -1,11 +1,27 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const satoshi = localFont({
+  src: [
+    { path: "../../public/fonts/Satoshi-Variable.woff2",         style: "normal" },
+    { path: "../../public/fonts/Satoshi-VariableItalic.woff2",   style: "italic" },
+  ],
+  variable: "--font-satoshi",
+  display: "swap",
+});
+
+const editorialNew = localFont({
+  src: [
+    { path: "../../public/fonts/PPEditorialNew-Ultralight.otf",       weight: "200", style: "normal" },
+    { path: "../../public/fonts/PPEditorialNew-UltralightItalic.otf", weight: "200", style: "italic" },
+    { path: "../../public/fonts/PPEditorialNew-Regular.otf",          weight: "400", style: "normal" },
+    { path: "../../public/fonts/PPEditorialNew-Italic.otf",           weight: "400", style: "italic" },
+  ],
+  variable: "--font-editorial",
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -14,8 +30,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rigurama",
-  description: "Gestión inmobiliaria 360º",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: {
+    default: "Frigurama",
+    template: "%s | Frigurama",
+  },
+  description:
+    "Gestión inmobiliaria 360º con metodología propia. Compra, venta y alquiler de pisos, chalets, locales y más en Barcelona.",
+  openGraph: {
+    siteName: "Frigurama",
+    locale: "es_ES",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -36,7 +62,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#e7ecec] text-black`}
+        className={`${satoshi.variable} ${satoshi.className} ${editorialNew.variable} ${geistMono.variable} antialiased bg-[#e7ecec] text-black`}
       >
         {children}
       </body>

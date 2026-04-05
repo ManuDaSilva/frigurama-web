@@ -78,6 +78,8 @@ export async function PATCH(req: Request, { params }: Context) {
     // Build update payload — only include fields that were sent
     const data: Record<string, unknown> = {};
 
+    if (body.lat !== undefined)         data.lat         = toNum(body.lat);
+    if (body.lng !== undefined)         data.lng         = toNum(body.lng);
     if (body.title !== undefined)       data.title       = toStr(body.title) ?? "Sin título";
     if (body.description !== undefined) data.description = toStr(body.description);
     if (body.address !== undefined)     data.address     = toStr(body.address);
@@ -95,11 +97,13 @@ export async function PATCH(req: Request, { params }: Context) {
     if (body.reference !== undefined)   data.reference   = toStr(body.reference);
     if (body.contactEmail !== undefined) data.contactEmail = toStr(body.contactEmail);
     if (body.contactPhone !== undefined) data.contactPhone = toStr(body.contactPhone);
+    if (body.published !== undefined)   data.published   = Boolean(body.published);
     if (body.coverUrl !== undefined)    data.coverUrl    = toStr(body.coverUrl);
     if (body.extras !== undefined)      data.extras      = body.extras ?? {};
-    if (body.energyLabel !== undefined) data.energyLabel = toStr(body.energyLabel);
-    if (body.energyConsumption !== undefined) data.energyConsumption = toNum(body.energyConsumption);
-    if (body.energyEmissions !== undefined)   data.energyEmissions   = toNum(body.energyEmissions);
+    if (body.energyConsumption !== undefined)      data.energyConsumption      = toNum(body.energyConsumption);
+    if (body.energyConsumptionLabel !== undefined) data.energyConsumptionLabel = toStr(body.energyConsumptionLabel);
+    if (body.energyEmissions !== undefined)        data.energyEmissions        = toNum(body.energyEmissions);
+    if (body.energyEmissionsLabel !== undefined)   data.energyEmissionsLabel   = toStr(body.energyEmissionsLabel);
 
     const operation = mapOperation(body.operation);
     if (operation) data.operation = operation;

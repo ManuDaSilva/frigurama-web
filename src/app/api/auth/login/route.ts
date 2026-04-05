@@ -5,21 +5,20 @@ import { signToken, COOKIE_NAME, COOKIE_MAX_AGE } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { username, password } = await req.json();
 
-    if (!email?.trim() || !password) {
+    if (!username?.trim() || !password) {
       return NextResponse.json(
-        { error: "Email y contraseña requeridos." },
+        { error: "Usuario y contraseña requeridos." },
         { status: 400 }
       );
     }
 
     const user = await prisma.user.findUnique({
-      where: { email: email.trim().toLowerCase() },
+      where: { username: username.trim() },
     });
 
-    // Use constant-time comparison to avoid timing attacks:
-    // always run bcrypt.compare even if user not found.
+    // Constant-time comparison to avoid timing attacks
     const DUMMY_HASH =
       "$2b$12$invalidhashpaddingtomatchbcryptlength00000000000000000000";
     const valid = await bcrypt.compare(
@@ -35,9 +34,9 @@ export async function POST(req: Request) {
     }
 
     const token = await signToken({
-      sub:   user.id,
-      email: user.email,
-      role:  user.role,
+      sub:      user.id,
+      username: user.username ?? user.id,
+      role:     user.role,
     });
 
     const res = NextResponse.json({ ok: true });

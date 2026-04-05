@@ -19,10 +19,11 @@ export default function ParallaxCardsSection() {
     offset: ["start end", "end start"], // cuando entra por abajo -> cuando sale por arriba
   });
 
-  // Velocidades diferentes por columna (ajusta números si quieres más/menos movimiento)
-  const yCol1 = useTransform(scrollYProgress, [0, 1], [80, -140]);
-  const yCol2 = useTransform(scrollYProgress, [0, 1], [40, -80]);
-  const yCol3 = useTransform(scrollYProgress, [0, 1], [100, -180]);
+  // Izquierda: sticky (lg:sticky lg:top-32 en el JSX) — no tiene transform
+  // Derecha: 3 columnas con velocidades distintas — suave y editorial
+  const yCol1 = useTransform(scrollYProgress, [0, 1], [1040,  -2460]);  // media
+  const yCol2 = useTransform(scrollYProgress, [0, 1], [380,   -930]);  // ancla, casi quieta
+  const yCol3 = useTransform(scrollYProgress, [0, 1], [40,  -80]);  // la más rápida
 
   // ✅ Mete aquí tus 9 imágenes (rutas en /public)
   const cards: Card[] = [
@@ -46,30 +47,27 @@ export default function ParallaxCardsSection() {
     <section
       ref={ref}
       className="
-        w-full
+        w-full overflow-hidden
         bg-[var(--background)]
         text-[var(--foreground)]
       "
     >
       {/* “Altura de sección” para que el movimiento se aprecie bien */}
       <div className="mx-auto max-w-[1900px] px-10 py-24">
+
         <div className="grid grid-cols-12 gap-10">
           {/* Columna izquierda: texto sticky */}
           <div className="col-span-12 lg:col-span-3">
             <div className="lg:sticky lg:top-32">
-              <h2 className="text-[44px] leading-[0.95] tracking-[0.18em] uppercase">
-                EDIFICIOS
-                <br />
-                Y OFICINAS
-              </h2>
-
-              <div className="mt-6">
-                <button className="rounded-full bg-black px-7 py-3 text-[12px] tracking-[0.25em] uppercase text-white">
+              <div className="flex items-start gap-4">
+                <h2 className="text-[36px] font-light tracking-tight uppercase leading-tight">
+                  EDIFICIOS<br />Y OFICINAS
+                </h2>
+                <button className="mt-1 px-5 py-2 rounded-full bg-black text-white text-[10px] tracking-[0.2em] uppercase hover:bg-[#FF8614] transition-colors whitespace-nowrap">
                   MÁS INFO
                 </button>
               </div>
-
-              <p className="mt-10 max-w-[340px] text-[15px] leading-7 text-black/70">
+              <p className="mt-8 max-w-[340px] text-[17px] leading-[1.9] text-black/70 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
                 Proyectos de gran envergadura, torres, oficinas y espacios integrales
                 diseñados con atención minuciosa para equilibrar funcionalidad y estética,
                 creando entornos que inspiran innovación, promueven la eficiencia y potencian el éxito.
@@ -79,20 +77,20 @@ export default function ParallaxCardsSection() {
 
           {/* Derecha: grid 3 columnas con parallax */}
           <div className="col-span-12 lg:col-span-9">
-            <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-              <motion.div style={{ y: yCol1 }} className="flex flex-col gap-10">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <motion.div style={{ y: yCol1 }} className="flex flex-col gap-6">
                 {col1.map((c) => (
                   <CardItem key={c.id} card={c} />
                 ))}
               </motion.div>
 
-              <motion.div style={{ y: yCol2 }} className="flex flex-col gap-10">
+              <motion.div style={{ y: yCol2 }} className="flex flex-col gap-6">
                 {col2.map((c) => (
                   <CardItem key={c.id} card={c} />
                 ))}
               </motion.div>
 
-              <motion.div style={{ y: yCol3 }} className="flex flex-col gap-10">
+              <motion.div style={{ y: yCol3 }} className="flex flex-col gap-6">
                 {col3.map((c) => (
                   <CardItem key={c.id} card={c} />
                 ))}

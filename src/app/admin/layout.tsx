@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import LogoutButton from "./LogoutButton";
 
-export const metadata = { title: "Admin — Rigurama" };
+export const metadata = { title: "Admin — Frigurama" };
 
 export default async function AdminLayout({
   children,
@@ -20,7 +20,7 @@ export default async function AdminLayout({
 
           {/* Brand */}
           <span className="font-semibold text-sm tracking-wide">
-            Rigurama <span className="text-gray-400 font-normal">Admin</span>
+            Frigurama <span className="text-gray-400 font-normal">Admin</span>
           </span>
 
           {/* Nav links */}
@@ -37,12 +37,26 @@ export default async function AdminLayout({
             >
               Inmuebles
             </Link>
+            <Link
+              href="/admin/content"
+              className="text-gray-600 hover:text-black transition-colors"
+            >
+              Contenido
+            </Link>
+            {session?.role === "superadmin" && (
+              <Link
+                href="/admin/users"
+                className="text-gray-600 hover:text-black transition-colors"
+              >
+                Usuarios
+              </Link>
+            )}
           </nav>
 
           {/* User + logout */}
           <div className="flex items-center gap-4 text-sm ml-auto">
             <span className="text-gray-400 hidden sm:block">
-              {session?.email}
+              {session?.username}
             </span>
             <LogoutButton />
           </div>

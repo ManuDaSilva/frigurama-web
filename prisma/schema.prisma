@@ -65,6 +65,7 @@ model Listing {
 
   // Estado y visibilidad
   status      ListingStatus @default(activo)
+  published   Boolean       @default(true)
 
   // Operación
   operation   Operation? @default(venta)
@@ -77,10 +78,13 @@ model Listing {
   images      Image[]
 
   // Energía
-  energyStatus       EnergyStatus?
-  energyLabel        String?
-  energyConsumption  Int?
-  energyEmissions    Int?
+  energyStatus            EnergyStatus?
+  /// @deprecated — campo heredado; ningún código nuevo lo escribe. Se mantiene solo para no perder datos hasta confirmar la migración.
+  energyLabel             String?
+  energyConsumption       Int?
+  energyConsumptionLabel  String?   // letra A–G para consumo energético
+  energyEmissions         Int?
+  energyEmissionsLabel    String?   // letra A–G para emisiones de CO₂
 
   // Contacto
   reference     String?
@@ -99,15 +103,19 @@ model Listing {
 }
 
 enum UserRole {
+  superadmin
   admin
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String    @id @default(cuid())
+  username     String?   @unique   // nullable for migration safety; always set in practice
+  email        String?   @unique
+  name         String?
   passwordHash String
-  role         UserRole @default(admin)
-  createdAt    DateTime @default(now())
+  role         UserRole  @default(admin)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt @default(now())
 }
 
 model Image {
@@ -116,6 +124,13 @@ model Image {
   listingId  String
   listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  section   String   @unique
+  content   Json
+  updatedAt DateTime @updatedAt
 }
 
 

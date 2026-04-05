@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 function useInView(threshold = 0.2) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -22,15 +23,42 @@ function useInView(threshold = 0.2) {
   return { ref, inView };
 }
 
-export default function ContactSection() {
+export type ContactContent = {
+  heading: string;
+  lines: string[];
+  image: string;
+  ctaText: string;
+  phone: string;
+  email: string;
+  address: string;
+};
+
+const DEFAULT_CONTENT: ContactContent = {
+  heading: "Mantente\nen contacto",
+  lines: [
+    "Propósito que guía",
+    "Estrategia que ordena",
+    "Equipo que cumple",
+    "Espacios que impulsan tu crecimiento.",
+  ],
+  image: "/images/contacto.jpg",
+  ctaText: "HAZ TU CONSULTA AQUÍ",
+  phone: "934763494",
+  email: "info@frigurama.com",
+  address: "08036. Muntaner, 0200",
+};
+
+export default function ContactSection({ content = DEFAULT_CONTENT }: { content?: ContactContent }) {
   const { ref, inView } = useInView(0.25);
+  const pathname = usePathname();
+  const parts = content.heading.split("\n");
 
   return (
     <section
       ref={ref}
       className="relative w-full bg-[var(--background)]"
     >
-      <div className="mx-auto w-full max-w-[1920px] px-10">
+      <div className="mx-auto w-full max-w-[1920px] px-5 sm:px-10">
         <div className="grid grid-cols-12 items-center gap-x-10 gap-y-10 py-24">
           {/* Imagen izquierda */}
           <div className="col-span-12 md:col-span-4">
@@ -42,9 +70,8 @@ export default function ContactSection() {
                 inView ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
               ].join(" ")}
             >
-              {/* Cambia este src por tu imagen */}
               <img
-                src="/images/contacto.jpg"
+                src={content.image || "/images/contacto.jpg"}
                 alt="Rigūrama"
                 className="h-full w-full object-cover"
                 draggable={false}
@@ -57,27 +84,26 @@ export default function ContactSection() {
             <div className="relative">
               <h3
                 className={[
-                  "text-[44px] leading-[1.05] tracking-[-0.02em] text-black/85",
+                  "text-[30px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-black/85",
                   "transition-all duration-700",
                   inView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
                 ].join(" ")}
               >
-                Mantente
-                <br />
-                <span className="text-black/55">en contacto</span>
+                {parts[0]}
+                {parts[1] !== undefined && (
+                  <>
+                    <br />
+                    <span className="text-black/55">{parts[1]}</span>
+                  </>
+                )}
               </h3>
 
               <div className="mt-10 space-y-1">
-                {[
-                  "Propósito que guía",
-                  "Estrategia que ordena",
-                  "Equipo que cumple",
-                  "Espacios que impulsan tu crecimiento.",
-                ].map((line, i) => (
+                {content.lines.map((line, i) => (
                   <p
-                    key={line}
+                    key={i}
                     className={[
-                      "text-[40px] leading-[1.05] tracking-[-0.02em] text-black/55",
+                      "text-[26px] sm:text-[40px] leading-[1.05] tracking-[-0.02em] text-black/55",
                       "transition-all duration-700 will-change-transform",
                       inView
                         ? "translate-y-0 opacity-100"
@@ -104,12 +130,14 @@ export default function ContactSection() {
                   <span className="text-black/60">©2026</span>
                 </div>
 
-                <a
-                  href="/contacto"
-                  className="inline-flex items-center justify-center rounded-full bg-black px-10 py-3 text-[14px] font-medium uppercase tracking-[0.22em] text-white shadow-[0_18px_45px_rgba(0,0,0,0.20)] transition hover:translate-y-[-1px] hover:bg-black/90"
-                >
-                  HAZ TU CONSULTA AQUÍ
-                </a>
+                {pathname !== "/contact" && (
+                  <a
+                    href="/contact"
+                    className="inline-flex items-center justify-center rounded-full bg-black px-10 py-3 text-[14px] font-medium uppercase tracking-[0.22em] text-white shadow-[0_18px_45px_rgba(0,0,0,0.20)] transition hover:translate-y-[-1px] hover:bg-black/90"
+                  >
+                    {content.ctaText}
+                  </a>
+                )}
               </div>
             </div>
           </div>

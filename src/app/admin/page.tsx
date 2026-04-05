@@ -43,7 +43,7 @@ export default async function AdminDashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <Link
-          href="/listings/new"
+          href="/admin/listings/new"
           className="bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
         >
           + Nuevo inmueble
@@ -90,7 +90,7 @@ export default async function AdminDashboard() {
               Gestionar inmuebles
             </Link>
             <Link
-              href="/listings/new"
+              href="/admin/listings/new"
               className="text-sm border rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
             >
               Publicar inmueble

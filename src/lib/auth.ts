@@ -15,10 +15,14 @@ function getSecret() {
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export type SessionPayload = {
-  sub:   string; // user id
-  email: string;
-  role:  string;
+  sub:      string; // user id
+  username: string;
+  role:     string;
 };
+
+export function isSuperAdmin(session: SessionPayload | null): boolean {
+  return session?.role === "superadmin";
+}
 
 // ── JWT helpers ──────────────────────────────────────────────────────────────
 

@@ -14,17 +14,46 @@ const STATUS_LABELS: Record<ListingStatus, string> = {
 export default function AdminListingActions({
   id,
   status,
+  published,
   title,
   isPublic,
 }: {
   id: string;
   status: ListingStatus;
+  published: boolean;
   title: string | null;
   isPublic: boolean;
 }) {
   const router = useRouter();
-  const [busy, setBusy]   = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy]         = useState(false);
+  const [succeeded, setSucceeded] = useState(false);
+  const [error, setError]       = useState<string | null>(null);
+
+  function refreshWithDelay() {
+    setSucceeded(true);
+    setTimeout(() => { router.refresh(); }, 900);
+  }
+
+  async function handlePublishedToggle() {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/listings/${id}`, {
+        method:  "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ published: !published }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? "Error al actualizar la visibilidad.");
+      }
+      refreshWithDelay();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Error desconocido.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function handleStatusChange(newStatus: ListingStatus) {
     if (newStatus === status) return;
@@ -40,7 +69,7 @@ export default function AdminListingActions({
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.error ?? "Error al actualizar el estado.");
       }
-      router.refresh();
+      refreshWithDelay();
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Error desconocido.");
     } finally {
@@ -90,6 +119,22 @@ export default function AdminListingActions({
             </option>
           ))}
         </select>
+
+        {/* Visibility toggle */}
+        <button
+          type="button"
+          disabled={busy || succeeded}
+          onClick={handlePublishedToggle}
+          className={`text-xs px-2 py-1 rounded border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            succeeded
+              ? "border-green-300 text-green-700 bg-green-50"
+              : published
+              ? "border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+              : "border-orange-300 text-orange-600 hover:bg-orange-50"
+          }`}
+        >
+          {succeeded ? "✓" : published ? "Visible" : "Oculto"}
+        </button>
 
         {/* Public view link — only for active listings */}
         {isPublic && (

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function LoginForm({ redirectTo }: { redirectTo: string }) {
   const router = useRouter();
-  const [email, setEmail]       = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState<string | null>(null);
   const [loading, setLoading]   = useState(false);
@@ -19,7 +19,7 @@ export default function LoginForm({ redirectTo }: { redirectTo: string }) {
       const res = await fetch("/api/auth/login", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email, password }),
+        body:    JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
@@ -44,16 +44,16 @@ export default function LoginForm({ redirectTo }: { redirectTo: string }) {
       className="bg-white rounded-2xl border shadow-sm p-8 space-y-5"
     >
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-sm font-medium">
-          Email
+        <label htmlFor="username" className="block text-sm font-medium">
+          Usuario
         </label>
         <input
-          id="email"
-          type="email"
-          autoComplete="email"
+          id="username"
+          type="text"
+          autoComplete="username"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
         />
       </div>

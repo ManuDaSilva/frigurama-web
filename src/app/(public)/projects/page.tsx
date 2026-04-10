@@ -1,43 +1,59 @@
 import { prisma } from "@/lib/prisma";
-
 import type { Metadata } from "next";
+import ProjectCard from "@/components/ProjectCard";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Proyectos",
+  title: "Proyectos — Frigurama",
   description:
     "Proyectos inmobiliarios de Frigurama: desarrollos residenciales, comerciales y de uso mixto con metodología propia.",
 };
 
-type ProyectosContent = { body: string };
-
-const DEFAULT_BODY = "<h1>Proyectos</h1><p>Próximamente.</p>";
-
 export default async function ProjectsPage() {
-  const row = await prisma.siteContent.findUnique({ where: { section: "proyectos" } });
-  const content = (row?.content as ProyectosContent) ?? { body: DEFAULT_BODY };
-  const body = content.body || DEFAULT_BODY;
+  const projects = await prisma.project.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
-    <main className="w-full bg-[var(--background)] text-black font-sans pt-[81px]">
-      <div className="mx-auto w-full max-w-[800px] px-6 py-20">
-        <div
-          className="
-            [&_h1]:text-[52px] [&_h1]:font-bold [&_h1]:leading-[1.05] [&_h1]:tracking-[-0.02em] [&_h1]:text-black/85 [&_h1]:mt-0 [&_h1]:mb-6
-            [&_h2]:text-[32px] [&_h2]:font-semibold [&_h2]:leading-[1.15] [&_h2]:tracking-[-0.01em] [&_h2]:text-black/80 [&_h2]:mt-12 [&_h2]:mb-4
-            [&_h3]:text-[22px] [&_h3]:font-semibold [&_h3]:text-black/75 [&_h3]:mt-8 [&_h3]:mb-3
-            [&_p]:text-[17px] [&_p]:leading-[1.75] [&_p]:text-black/65 [&_p]:mb-5
-            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-5 [&_ul]:space-y-1
-            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-5 [&_ol]:space-y-1
-            [&_li]:text-[17px] [&_li]:leading-[1.75] [&_li]:text-black/65
-            [&_a]:text-black/80 [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-black hover:[&_a]:transition-colors
-            [&_img]:rounded-[20px] [&_img]:w-full [&_img]:my-10 [&_img]:shadow-[0_8px_40px_rgba(0,0,0,0.08)]
-            [&_hr]:border-0 [&_hr]:border-t [&_hr]:border-black/10 [&_hr]:my-12
-            [&_strong]:font-semibold [&_strong]:text-black/80
-            [&_em]:italic
-          "
-          dangerouslySetInnerHTML={{ __html: body }}
-        />
-      </div>
-    </main>
+    <div className="bg-[#e7ecec]">
+
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <section className="w-full px-6 lg:pl-8 lg:pr-12 pt-16 pb-14">
+        <p className="text-[10px] tracking-[0.38em] uppercase text-gray-400 mb-5">(02)</p>
+        <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] items-end gap-8 lg:gap-16">
+          <h1 className="text-7xl lg:text-8xl xl:text-[9rem] font-light tracking-tight text-gray-900 leading-none">
+            Proyectos
+          </h1>
+          <div className="lg:pb-2 space-y-4 lg:border-l lg:border-gray-300 lg:pl-8">
+            <p className="text-sm text-gray-500 leading-relaxed max-w-sm">
+              Desarrollos residenciales, comerciales y de uso mixto con metodología propia.
+            </p>
+            <p className="text-[11px] tracking-[0.2em] uppercase text-gray-400">
+              {projects.length === 1
+                ? "1 proyecto"
+                : `${projects.length} proyectos`}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Grid ─────────────────────────────────────────────────────────── */}
+      <section className="px-6 lg:px-12 pb-40">
+        {projects.length === 0 ? (
+          <p className="text-sm text-gray-400 py-24 text-center tracking-wide">
+            Próximamente.
+          </p>
+        ) : (
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {projects.map((p) => (
+              <ProjectCard key={p.id} p={p} />
+            ))}
+          </ul>
+        )}
+      </section>
+
+    </div>
   );
 }

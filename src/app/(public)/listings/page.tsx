@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import type { Metadata, NextPage } from "next";
 import type { Prisma, PropertyType } from "@prisma/client";
 import ListingCard from "@/components/ListingCard";
+import StaggeredLines from "@/components/StaggeredLines";
 
 export const metadata: Metadata = {
   title: "Inmuebles en venta y alquiler",
@@ -19,14 +20,16 @@ function toInt(v: string | undefined) {
 }
 
 const PROPERTY_TYPES = [
-  { value: "Piso",    label: "Piso"    },
-  { value: "Atico",   label: "Ático"   },
-  { value: "Chalet",  label: "Chalet"  },
-  { value: "Adosado", label: "Adosado" },
-  { value: "Estudio", label: "Estudio" },
-  { value: "Local",   label: "Local"   },
-  { value: "Garaje",  label: "Garaje"  },
-  { value: "Terreno", label: "Terreno" },
+  { value: "Apartamento", label: "Apartamentos" },
+  { value: "Piso",    label: "Pisos"    },
+  { value: "Atico",   label: "Áticos"   },
+  { value: "Casa",    label: "Casas/Villas" },
+  { value: "Adosado", label: "Adosados" },
+  { value: "Estudio", label: "Estudios" },
+  { value: "Local",   label: "Locales"  },
+  { value: "Garaje",  label: "Garajes"  },
+  { value: "Terreno", label: "Terrenos/Naves Industriales" },
+  { value: "Oficina", label: "Edificios/Oficinas" },
 ] as const;
 
 export default async function ListingsPage({
@@ -39,7 +42,7 @@ export default async function ListingsPage({
   // ── Filtros ──────────────────────────────────────────────────────────────
   const q        = (sp.q    as string | undefined)?.trim();
   const city     = (sp.city as string | undefined)?.trim();
-  const VALID_TYPES = ["Piso","Atico","Chalet","Adosado","Estudio","Local","Garaje","Terreno"] as const;
+  const VALID_TYPES = ["Apartamento","Piso","Atico","Casa","Adosado","Estudio","Local","Garaje","Terreno","Oficina"] as const;
   const rawType    = (sp.type as string | undefined)?.trim();
   const typeFilter = VALID_TYPES.includes(rawType as never) ? (rawType as PropertyType) : undefined;
   const rawOp    = (sp.op as string | undefined)?.trim();
@@ -157,14 +160,16 @@ export default async function ListingsPage({
   const pillBase     = "px-4 py-1.5 rounded-full text-[11px] tracking-wide border transition-colors whitespace-nowrap";
 
   return (
-    <div className="bg-[#f0f2f0]">
+    <div className="bg-[#e7ecec]">
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-12 pt-16 pb-14">
+      <section className="w-full px-6 lg:pl-8 lg:pr-12 pt-16 pb-14">
         <p className="text-[10px] tracking-[0.38em] uppercase text-gray-400 mb-5">(01)</p>
         <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] items-end gap-8 lg:gap-16">
-          <h1 className="text-7xl lg:text-8xl xl:text-[7rem] font-light tracking-tight text-gray-900 leading-none font-editorial">
-            Viviendas
+          <h1 className="text-7xl lg:text-8xl xl:text-[9rem] font-light tracking-tight text-gray-900 leading-none">
+            {typeFilter
+              ? PROPERTY_TYPES.find((t) => t.value === typeFilter)?.label ?? "Viviendas"
+              : "Viviendas"}
           </h1>
           <div className="lg:pb-2 space-y-4 lg:border-l lg:border-gray-300 lg:pl-8">
             <p className="text-sm text-gray-500 leading-relaxed max-w-sm">
@@ -175,6 +180,7 @@ export default async function ListingsPage({
                 ? "1 propiedad disponible"
                 : `${total} propiedades disponibles`}
             </p>
+            <StaggeredLines />
           </div>
         </div>
       </section>
@@ -259,7 +265,7 @@ export default async function ListingsPage({
 
             {/* Fila 2 — filtros secundarios */}
             <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-[10px] tracking-[0.18em] uppercase text-gray-300 mr-1">Refinar:</span>
+              <span className="text-[13px] tracking-[0.18em] uppercase text-gray-500 mr-1">Refinar:</span>
               <input
                 name="bedrooms" type="number" min={0} placeholder="Hab. mín" defaultValue={minRooms ?? ""}
                 className="border border-gray-200 rounded-full px-4 py-1.5 text-xs text-gray-500 placeholder-gray-300 bg-white focus:outline-none focus:border-gray-400 w-24"
@@ -278,7 +284,7 @@ export default async function ListingsPage({
       </section>
 
       {/* ── Grid ─────────────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-12 pb-40">
+      <section className="px-6 lg:px-12 pb-40">
         {listings.length === 0 ? (
           <p className="text-sm text-gray-400 py-24 text-center tracking-wide">
             No hay propiedades que coincidan con el filtro.

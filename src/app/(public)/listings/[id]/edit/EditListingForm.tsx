@@ -10,8 +10,8 @@ import GoogleMap from "@/components/GoogleMap";
 type ListingStatus = "activo" | "oculto" | "vendido" | "alquilado";
 type Operation     = "venta" | "alquiler";
 type PropertyType  =
-  | "Piso" | "Atico" | "Chalet" | "Adosado"
-  | "Estudio" | "Local" | "Garaje" | "Terreno";
+  | "Piso" | "Atico" | "Casa" | "Adosado"
+  | "Estudio" | "Local" | "Garaje" | "Terreno" | "Oficina";
 type EnergyStatus  = "tiene" | "tramite" | "exento";
 type Condition     = "nuevo" | "reformado" | "buen-estado" | "a-reformar";
 
@@ -526,7 +526,7 @@ export default function EditListingForm({
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Tipo de inmueble">
               <Select value={type} onChange={(v) => setType(v as PropertyType)}>
-                {(["Piso","Atico","Chalet","Adosado","Estudio","Local","Garaje","Terreno"] as const).map(
+                {(["Piso","Atico","Casa","Adosado","Estudio","Local","Garaje","Terreno","Oficina"] as const).map(
                   (t) => (
                     <option key={t} value={t}>
                       {t === "Atico" ? "Ático" : t}

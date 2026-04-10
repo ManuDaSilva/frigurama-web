@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#e7ecec]">
       {/* margen real tipo ReadyMag */}
       <div className="pt-0">
         <div
@@ -28,11 +29,15 @@ export default function Header() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06),rgba(0,0,0,0.40)_65%,rgba(0,0,0,0.55))]" />
           </div>
 
-          <Link
-            href="/"
-            className="relative z-10 text-white/85 text-[12px] tracking-[0.28em] uppercase"
-          >
-            FRIGURAMA
+          <Link href="/" className="relative z-10">
+            <Image
+              src="/rigurama-logo.svg"
+              alt="Frigurama"
+              width={180}
+              height={72}
+              className="object-contain"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
           </Link>
 
           <nav className="relative z-10 flex items-center gap-12 text-white text-[12px] tracking-[0.20em] uppercase">

@@ -7,7 +7,7 @@ const linkBase =
 
 export default function Footer() {
   return (
-    <footer className="w-full pb-0">
+    <footer className="w-full pb-0 bg-[#e7ecec]">
       <div className="px-0">
         <div
           className="
@@ -85,6 +85,9 @@ export default function Footer() {
               </div>
               <div className="mt-1.5 text-[12px] tracking-[0.22em] uppercase opacity-70">
                 © {new Date().getFullYear()}
+              </div>
+              <div className="mt-3 text-[10px] tracking-[0.15em] opacity-40 normal-case">
+                Diseño web: Manuel Morillas Da Silva
               </div>
             </div>
           </div>

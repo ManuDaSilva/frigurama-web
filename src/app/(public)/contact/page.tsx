@@ -17,11 +17,11 @@ const DEFAULT_CONTACT: ContactContent = {
     "Equipo que cumple",
     "Espacios que impulsan tu crecimiento.",
   ],
-  image: "/images/contacto.jpg",
+  image: "/contacto.jpg",
   ctaText: "HAZ TU CONSULTA AQUÍ",
   phone: "934763494",
   email: "info@frigurama.com",
-  address: "08036. Muntaner, 0200",
+  address: "C/ de Muntaner, 200, 3º4ª, Eixample, 08036 Barcelona",
 };
 
 export default async function ContactPage() {
@@ -29,7 +29,7 @@ export default async function ContactPage() {
   const content: ContactContent = (row?.content as ContactContent) ?? DEFAULT_CONTACT;
 
   return (
-    <main className="w-full bg-[var(--background)] text-black font-sans pt-[81px]">
+    <main className="w-full min-h-screen bg-[#e7ecec] text-black font-sans pt-[81px]">
       <ContactSection content={content} />
 
       {/* Contact details */}

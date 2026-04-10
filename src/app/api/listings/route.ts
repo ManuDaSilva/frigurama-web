@@ -80,7 +80,7 @@ function mapEnergyStatus(x?: string): EnergyStatus | null {
 }
 
 function mapPropertyType(x?: string): PropertyType {
-  const list = ["Piso", "Atico", "Chalet", "Adosado", "Estudio", "Local", "Garaje", "Terreno"] as const;
+  const list = ["Piso", "Atico", "Casa", "Adosado", "Estudio", "Local", "Garaje", "Terreno", "Oficina"] as const;
   return list.includes(x as any) ? (x as PropertyType) : "Piso";
 }
 

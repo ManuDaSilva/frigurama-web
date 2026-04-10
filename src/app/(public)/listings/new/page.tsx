@@ -107,12 +107,13 @@ type FormState = {
   type?:
     | "Piso"
     | "Atico"
-    | "Chalet"
+    | "Casa"
     | "Adosado"
     | "Estudio"
     | "Local"
     | "Garaje"
-    | "Terreno";
+    | "Terreno"
+    | "Oficina";
 
   address?: string;
   city?: string;
@@ -460,12 +461,13 @@ function StepTipologiaButtons({
   }> = [
     { key: "Piso", label: "Piso", icon: "🏢" },
     { key: "Atico", label: "Ático", icon: "🏙️" },
-    { key: "Chalet", label: "Chalet", icon: "🏠" },
+    { key: "Casa", label: "Casa", icon: "🏠" },
     { key: "Adosado", label: "Adosado", icon: "🏘️" },
     { key: "Estudio", label: "Estudio", icon: "🛋️" },
     { key: "Local", label: "Local", icon: "🏪" },
     { key: "Garaje", label: "Garaje", icon: "🚗" },
     { key: "Terreno", label: "Terreno", icon: "🌳" },
+    { key: "Oficina", label: "Oficina", icon: "🏢" },
   ];
 
   return (

@@ -41,7 +41,7 @@ const DEFAULT_CONTENT: ContactContent = {
     "Equipo que cumple",
     "Espacios que impulsan tu crecimiento.",
   ],
-  image: "/images/contacto.jpg",
+  image: "/contacto-2.jpg",
   ctaText: "HAZ TU CONSULTA AQUÍ",
   phone: "934763494",
   email: "info@frigurama.com",
@@ -56,7 +56,7 @@ export default function ContactSection({ content = DEFAULT_CONTENT }: { content?
   return (
     <section
       ref={ref}
-      className="relative w-full bg-[var(--background)]"
+      className="relative w-full bg-[#e7ecec]"
     >
       <div className="mx-auto w-full max-w-[1920px] px-5 sm:px-10">
         <div className="grid grid-cols-12 items-center gap-x-10 gap-y-10 py-24">
@@ -71,7 +71,7 @@ export default function ContactSection({ content = DEFAULT_CONTENT }: { content?
               ].join(" ")}
             >
               <img
-                src={content.image || "/images/contacto.jpg"}
+                src={content.image || "/contacto.jpg"}
                 alt="Rigūrama"
                 className="h-full w-full object-cover"
                 draggable={false}

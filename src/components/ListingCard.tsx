@@ -45,7 +45,7 @@ export default function ListingCard({ l }: { l: Listing }) {
       <Link href={`/listings/${l.id}`} className="block">
 
         {/* Image */}
-        <div className="relative w-full aspect-[4/3] overflow-hidden">
+        <div className="relative w-full aspect-[4/3] sm:aspect-[5/4] lg:aspect-[1/1] overflow-hidden">
           {l.coverUrl ? (
             <Image
               src={l.coverUrl}
@@ -69,7 +69,7 @@ export default function ListingCard({ l }: { l: Listing }) {
         <div className="flex items-center gap-6 px-6 py-7">
 
           {/* Left — CTA */}
-          <span className="shrink-0 px-4 py-2 bg-gray-900 text-white rounded-xl text-[11px] tracking-[0.2em] uppercase hover:bg-gray-700 transition-colors duration-200">
+          <span className="shrink-0 px-4 py-2 bg-gray-900 text-white rounded-xl text-[11px] tracking-[0.2em] uppercase hover:bg-[#FF8614] transition-colors duration-200">
             Más info
           </span>
 

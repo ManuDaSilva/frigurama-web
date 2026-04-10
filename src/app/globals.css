@@ -66,3 +66,25 @@ html, body {
 .blink-fade {
   animation: blinkFade 1.4s ease-in-out infinite;
 }
+
+@keyframes slideUpIn {
+  from { transform: translateY(60px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes slideUpOut {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-60px); opacity: 0; }
+}
+@keyframes slideDownIn {
+  from { transform: translateY(-60px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes slideDownOut {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(60px); opacity: 0; }
+}
+
+.slide-up-in    { animation: slideUpIn   0.5s cubic-bezier(0.4,0,0.2,1) forwards; }
+.slide-up-out   { animation: slideUpOut  0.5s cubic-bezier(0.4,0,0.2,1) forwards; }
+.slide-down-in  { animation: slideDownIn 0.5s cubic-bezier(0.4,0,0.2,1) forwards; }
+.slide-down-out { animation: slideDownOut 0.5s cubic-bezier(0.4,0,0.2,1) forwards; }

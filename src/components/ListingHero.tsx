@@ -200,10 +200,17 @@ export default function ListingHero({
           {/* CTAs */}
           <div className="flex flex-col items-start gap-3">
             <a
-              href={contactHref}
-              className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-[11px] font-medium tracking-[0.25em] uppercase text-white hover:bg-black/80 transition-colors"
+              href="#detalles"
+              className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-[11px] font-medium tracking-[0.25em] uppercase text-white hover:bg-[#FF8614] transition-colors"
             >
-              Solicitar información
+              Más detalles
+            </a>
+            <a
+              href={contactHref}
+              className="inline-flex items-center gap-2 text-[11px] tracking-[0.18em] text-black/40 hover:text-black/65 transition-colors"
+            >
+              <span className="text-black/25" aria-hidden>↗</span>
+              {contactEmail ?? "info@frigurama.com"}
             </a>
             {contactPhone && (
               <a

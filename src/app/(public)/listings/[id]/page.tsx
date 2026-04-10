@@ -290,7 +290,7 @@ export default async function ListingDetail({
       <div className="border-t border-black/8" />
 
       {/* ── CONTENIDO ──────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto px-6 sm:px-10 py-16 space-y-14">
+      <div id="detalles" className="max-w-5xl mx-auto px-6 sm:px-10 py-16 space-y-14">
 
         {/* Descripción */}
         {listing.description && (

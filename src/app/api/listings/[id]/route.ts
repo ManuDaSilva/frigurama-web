@@ -29,7 +29,7 @@ function mapOperation(x?: string): Operation | null {
 
 function mapPropertyType(x?: string): PropertyType | null {
   const valid = [
-    "Piso","Atico","Chalet","Adosado","Estudio","Local","Garaje","Terreno",
+    "Piso","Atico","Casa","Adosado","Estudio","Local","Garaje","Terreno","Oficina",
   ] as const;
   return valid.includes(x as never) ? (x as PropertyType) : null;
 }

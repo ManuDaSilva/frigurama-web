@@ -23,7 +23,7 @@ const DEFAULT: ContactContent = {
     "Equipo que cumple",
     "Espacios que impulsan tu crecimiento.",
   ],
-  image: "/images/contacto.jpg",
+  image: "/contacto.jpg",
   ctaText: "HAZ TU CONSULTA AQUÍ",
   phone: "934763494",
   email: "info@frigurama.com",

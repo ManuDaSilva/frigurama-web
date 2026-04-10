@@ -27,15 +27,15 @@ export default function ParallaxCardsSection() {
 
   // ✅ Mete aquí tus 9 imágenes (rutas en /public)
   const cards: Card[] = [
-    { id: "01", src: "/images/proyectos/01.jpg", alt: "Proyecto 01" },
-    { id: "02", src: "/images/proyectos/02.jpg", alt: "Proyecto 02" },
-    { id: "03", src: "/images/proyectos/03.jpg", alt: "Proyecto 03" },
-    { id: "04", src: "/images/proyectos/04.jpg", alt: "Proyecto 04" },
-    { id: "05", src: "/images/proyectos/05.jpg", alt: "Proyecto 05" },
-    { id: "06", src: "/images/proyectos/06.jpg", alt: "Proyecto 06" },
-    { id: "07", src: "/images/proyectos/07.jpg", alt: "Proyecto 07" },
-    { id: "08", src: "/images/proyectos/08.jpg", alt: "Proyecto 08" },
-    { id: "09", src: "/images/proyectos/09.jpg", alt: "Proyecto 09" },
+    { id: "01", src: "/proyectos/01.jpg", alt: "Proyecto 01" },
+    { id: "02", src: "/proyectos/02.jpg", alt: "Proyecto 02" },
+    { id: "03", src: "/proyectos/03.jpg", alt: "Proyecto 03" },
+    { id: "04", src: "/proyectos/04.jpg", alt: "Proyecto 04" },
+    { id: "05", src: "/proyectos/05.jpg", alt: "Proyecto 05" },
+    { id: "06", src: "/proyectos/06.jpg", alt: "Proyecto 06" },
+    { id: "07", src: "/proyectos/07.jpg", alt: "Proyecto 07" },
+    { id: "08", src: "/proyectos/08.jpg", alt: "Proyecto 08" },
+    { id: "09", src: "/proyectos/09.jpg", alt: "Proyecto 09" },
   ];
 
   // 3 columnas (3 + 3 + 3)
@@ -48,7 +48,7 @@ export default function ParallaxCardsSection() {
       ref={ref}
       className="
         w-full overflow-hidden
-        bg-[var(--background)]
+        bg-[#e7ecec]
         text-[var(--foreground)]
       "
     >
@@ -63,11 +63,13 @@ export default function ParallaxCardsSection() {
                 <h2 className="text-[36px] font-light tracking-tight uppercase leading-tight">
                   EDIFICIOS<br />Y OFICINAS
                 </h2>
-                <button className="mt-1 px-5 py-2 rounded-full bg-black text-white text-[10px] tracking-[0.2em] uppercase hover:bg-[#FF8614] transition-colors whitespace-nowrap">
-                  MÁS INFO
-                </button>
+                <a href="/listings?type=Oficina">
+                  <button className="mt-1 px-5 py-2 rounded-full bg-black text-white text-[10px] tracking-[0.2em] uppercase hover:bg-[#FF8614] transition-colors whitespace-nowrap">
+                    MÁS INFO
+                  </button>
+                </a>
               </div>
-              <p className="mt-8 max-w-[340px] text-[17px] leading-[1.9] text-black/70 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
+              <p className="mt-8 max-w-[340px] text-[17px] leading-[1.15] text-black/70 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
                 Proyectos de gran envergadura, torres, oficinas y espacios integrales
                 diseñados con atención minuciosa para equilibrar funcionalidad y estética,
                 creando entornos que inspiran innovación, promueven la eficiencia y potencian el éxito.

@@ -11,28 +11,28 @@ type Slide = {
   caption?: string;
 };
 
-const slides: Slide[] = [
+const DEFAULT_SLIDES: Slide[] = [
   {
     id: 1,
-    main: "/casa-1.png",
-    preview: "/casa-1.png",
-    label: "Maison Crivela",
+    main: "/casa-1.jpg",
+    preview: "/casa-4.jpg",
+    label: " ",
     caption:
       "PROYECTOS PENSADOS PARA DISFRUTAR LA VIDA EN LA CIUDAD, CON COMODIDADES Y ELEGANCIA EN EQUILIBRIO, CON ÁREAS",
   },
   {
     id: 2,
-    main: "/casa-1.png",
-    preview: "/casa-1.png",
-    label: "Maison Crivela",
+    main: "/casa-2.jpg",
+    preview: "/casa-5.jpg",
+    label: " ",
     caption:
       "PROYECTOS PENSADOS PARA DISFRUTAR LA VIDA EN LA CIUDAD, CON COMODIDADES Y ELEGANCIA EN EQUILIBRIO, CON ÁREAS",
   },
   {
     id: 3,
-    main: "/casa-1.png",
-    preview: "/casa-1.png",
-    label: "Maison Crivela",
+    main: "/casa-3.jpg",
+    preview: "/casa-6.jpg",
+    label: " ",
     caption:
       "PROYECTOS PENSADOS PARA DISFRUTAR LA VIDA EN LA CIUDAD, CON COMODIDADES Y ELEGANCIA EN EQUILIBRIO, CON ÁREAS",
   },
@@ -40,17 +40,24 @@ const slides: Slide[] = [
 
 type Props = {
   className?: string;
+  imageUrls?: { main: string; preview: string }[];
 };
 
-export default function HousesVillasSlider({ className = "" }: Props) {
+export default function HousesVillasSlider({ className = "", imageUrls }: Props) {
+  const slides = DEFAULT_SLIDES.map((s, i) => ({
+    ...s,
+    main: imageUrls?.[i]?.main || s.main,
+    preview: imageUrls?.[i]?.preview || s.preview,
+  }));
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState(0);
 
   const MAIN_W = 780;
   const MAIN_H = 720;
-  const GAP = 48; // prueba 20, 24 o 28
+  const GAP = 48;
   const STEP = MAIN_W + GAP;
 
+  // Sync active index from internal scroll
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -64,6 +71,71 @@ export default function HousesVillasSlider({ className = "" }: Props) {
     onScroll();
 
     return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Scroll hijack: congela la página y mueve las imágenes con la rueda
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    let locked = false;
+    let currentIndex = 0;
+    let accumulated = 0;
+    const THRESHOLD = 70;
+
+    const goTo = (index: number) => {
+      currentIndex = index;
+      el.scrollTo({ left: index * STEP, behavior: "smooth" });
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!locked) return;
+      e.preventDefault();
+
+      accumulated += e.deltaY;
+
+      if (Math.abs(accumulated) < THRESHOLD) return;
+
+      const direction = accumulated > 0 ? 1 : -1;
+      accumulated = 0;
+
+      const next = currentIndex + direction;
+
+      if (next < 0) {
+        // En el primer slide scrollando arriba → liberar
+        locked = false;
+        return;
+      }
+
+      if (next >= slides.length) {
+        // En el último slide scrollando abajo → liberar
+        locked = false;
+        return;
+      }
+
+      goTo(next);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          locked = true;
+          accumulated = 0;
+          currentIndex = Math.round(el.scrollLeft / STEP);
+        } else {
+          locked = false;
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(el);
+    window.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("wheel", onWheel);
+    };
   }, []);
 
   const current = slides[active];

@@ -27,11 +27,13 @@ type Props = {
 
 /* ── Formatter ───────────────────────────────────────────────── */
 
-const fmt = new Intl.NumberFormat("es-ES", {
-  style: "currency",
-  currency: "EUR",
-  maximumFractionDigits: 0,
-});
+function fmt(n: number): string {
+  return (
+    Math.round(n)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " €"
+  );
+}
 
 /* ── Component ───────────────────────────────────────────────── */
 
@@ -68,7 +70,7 @@ export default function ListingHero({
     operation === "venta"    ? "Venta"    : null;
 
   const typeLabel = type === "Atico" ? "Ático" : type;
-  const priceStr  = !priceHidden ? fmt.format(price) : null;
+  const priceStr  = !priceHidden ? fmt(price) : null;
 
   const specs = [
     typeLabel,
@@ -138,7 +140,7 @@ export default function ListingHero({
           {/* Back */}
           <Link
             href="/listings"
-            className="text-[10px] tracking-[0.28em] uppercase text-black/40 hover:text-black/70 transition-colors mb-6 self-start"
+            className="text-[10px] tracking-[0.28em] uppercase text-black/55 hover:text-black/80 transition-colors mb-6 self-start"
           >
             ← Inmuebles
           </Link>
@@ -157,7 +159,7 @@ export default function ListingHero({
 
           {/* Location */}
           {location && location !== "—" && (
-            <p className="text-sm text-black/40 tracking-wide mb-6">{location}</p>
+            <p className="text-sm text-black/60 tracking-wide mb-6">{location}</p>
           )}
 
           {/* Price */}
@@ -167,11 +169,11 @@ export default function ListingHero({
                 <p className="text-[2.2rem] sm:text-[2.6rem] font-editorial font-light leading-none text-black/88">
                   {priceStr}
                   {operation === "alquiler" && (
-                    <span className="text-lg text-black/35 ml-2">/mes</span>
+                    <span className="text-lg text-black/55 ml-2">/mes</span>
                   )}
                 </p>
                 {communityFees != null && communityFees > 0 && (
-                  <p className="mt-1.5 text-xs text-black/35 tracking-wide">
+                  <p className="mt-1.5 text-xs text-black/55 tracking-wide">
                     Comunidad · {communityFees} €/mes
                   </p>
                 )}
@@ -185,7 +187,7 @@ export default function ListingHero({
 
           {/* Specs */}
           {specs.length > 0 && (
-            <div className="flex flex-wrap items-center gap-y-1 text-[11px] tracking-[0.18em] uppercase text-black/45 mb-8">
+            <div className="flex flex-wrap items-center gap-y-1 text-[11px] tracking-[0.18em] uppercase text-black/60 mb-8">
               {specs.map((s, i) => (
                 <span key={s} className="flex items-center">
                   {i > 0 && (
@@ -207,17 +209,17 @@ export default function ListingHero({
             </a>
             <a
               href={contactHref}
-              className="inline-flex items-center gap-2 text-[11px] tracking-[0.18em] text-black/40 hover:text-black/65 transition-colors"
+              className="inline-flex items-center gap-2 text-[11px] tracking-[0.18em] text-black/60 hover:text-black/80 transition-colors"
             >
-              <span className="text-black/25" aria-hidden>↗</span>
+              <span className="text-black/45" aria-hidden>↗</span>
               {contactEmail ?? "info@frigurama.com"}
             </a>
             {contactPhone && (
               <a
                 href={`tel:${contactPhone}`}
-                className="inline-flex items-center gap-2 text-[11px] tracking-[0.18em] text-black/40 hover:text-black/65 transition-colors"
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.18em] text-black/60 hover:text-black/80 transition-colors"
               >
-                <span className="text-black/25" aria-hidden>↗</span>
+                <span className="text-black/45" aria-hidden>↗</span>
                 {contactPhone}
               </a>
             )}

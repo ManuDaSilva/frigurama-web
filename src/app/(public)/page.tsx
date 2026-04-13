@@ -14,6 +14,7 @@ type PortadaContent = {
   apartments?: { slides: { main: string; side: string }[] };
   houses?:     { slides: { main: string; preview: string }[] };
   terrain?:    { slides: { main: string; side: string }[] };
+  offices?:    { slides: { src: string }[] };
 };
 
 export default function Home() {
@@ -116,7 +117,7 @@ export default function Home() {
       </section>
 
       {/* ── EDIFICIOS Y OFICINAS ─────────────────────────────────────── */}
-      <ParallaxCardsSection />
+      <ParallaxCardsSection imageUrls={portada.offices?.slides} />
 
       {/* ── TERRENOS / NAVES INDUSTRIALES ────────────────────────────── */}
       <section className="bg-[#e7ecec] py-24 overflow-hidden">

@@ -7,11 +7,13 @@ import { useSaveFeedback } from "@/hooks/useSaveFeedback";
 
 type SlideMainSide    = { main: string; side: string };
 type SlideMainPreview = { main: string; preview: string };
+type SlideOffice      = { src: string };
 
 type PortadaContent = {
   apartments: { slides: SlideMainSide[] };
   houses:     { slides: SlideMainPreview[] };
   terrain:    { slides: SlideMainSide[] };
+  offices:    { slides: SlideOffice[] };
 };
 
 const DEFAULT: PortadaContent = {
@@ -34,6 +36,19 @@ const DEFAULT: PortadaContent = {
       { main: "/apto-main-terreno1.jpg", side: "/apto-side-terreno1.jpg" },
       { main: "/apto-main-terreno2.jpg", side: "/apto-side-terreno2.jpg" },
       { main: "/apto-main-terreno3.jpg", side: "/apto-side-terreno3.jpg" },
+    ],
+  },
+  offices: {
+    slides: [
+      { src: "/proyectos/01.jpg" },
+      { src: "/proyectos/02.jpg" },
+      { src: "/proyectos/03.jpg" },
+      { src: "/proyectos/04.jpg" },
+      { src: "/proyectos/05.jpg" },
+      { src: "/proyectos/06.jpg" },
+      { src: "/proyectos/07.jpg" },
+      { src: "/proyectos/08.jpg" },
+      { src: "/proyectos/09.jpg" },
     ],
   },
 };
@@ -219,6 +234,69 @@ function SectionHouses({
   );
 }
 
+// ── sección edificios / oficinas (9 imágenes simples) ─────────────────────────
+
+function SectionOffices({
+  slides,
+  onChange,
+}: {
+  slides: SlideOffice[];
+  onChange: (slides: SlideOffice[]) => void;
+}) {
+  function setUrl(i: number, url: string) {
+    const next = slides.map((s, idx) => idx === i ? { src: url } : s);
+    onChange(next);
+  }
+
+  return (
+    <div className="bg-white rounded-lg border">
+      <div className="px-6 py-4 border-b">
+        <p className="font-semibold text-sm">Edificios y Oficinas</p>
+        <p className="text-xs text-gray-400 mt-0.5">9 imágenes (3 columnas × 3 filas) con efecto parallax en portada.</p>
+      </div>
+      <div className="divide-y">
+        {slides.map((slide, i) => (
+          <div key={i} className="p-4 flex items-start gap-6">
+
+            <div className="flex flex-col gap-1 pt-1 shrink-0">
+              <button
+                type="button"
+                disabled={i === 0}
+                onClick={() => onChange(move(slides, i, i - 1))}
+                className="text-xs px-2 py-1 rounded border hover:bg-gray-50 disabled:opacity-30"
+              >↑</button>
+              <button
+                type="button"
+                disabled={i === slides.length - 1}
+                onClick={() => onChange(move(slides, i, i + 1))}
+                className="text-xs px-2 py-1 rounded border hover:bg-gray-50 disabled:opacity-30"
+              >↓</button>
+            </div>
+
+            <div className="text-xs text-gray-400 pt-3 w-4 shrink-0">{i + 1}</div>
+
+            <div className="space-y-2 flex-1">
+              <p className="text-xs font-medium text-gray-500">Imagen {i + 1}</p>
+              <Thumb src={slide.src} />
+              <div className="flex items-center gap-2">
+                <ImageUploader text="Subir" onUploaded={(url) => setUrl(i, url)} />
+                <input
+                  type="text"
+                  value={slide.src}
+                  onChange={(e) => setUrl(i, e.target.value)}
+                  placeholder="URL de la imagen"
+                  className="flex-1 border rounded px-2 py-1.5 text-xs"
+                />
+              </div>
+            </div>
+
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── página principal ───────────────────────────────────────────────────────────
 
 export default function AdminPortadaPage() {
@@ -229,7 +307,7 @@ export default function AdminPortadaPage() {
     fetch("/api/content/portada")
       .then((r) => r.ok ? r.json() : null)
       .then((data: PortadaContent | null) => {
-        if (data) setContent(data);
+        if (data) setContent({ ...DEFAULT, ...data });
       })
       .catch(() => {});
   }, []);
@@ -293,6 +371,12 @@ export default function AdminPortadaPage() {
         labelB="Imagen lateral (ascensor)"
         slides={content.terrain.slides}
         onChange={(slides) => setContent((prev) => ({ ...prev, terrain: { slides } }))}
+      />
+
+      {/* Edificios y Oficinas */}
+      <SectionOffices
+        slides={content.offices.slides}
+        onChange={(slides) => setContent((prev) => ({ ...prev, offices: { slides } }))}
       />
 
       {/* Guardar */}

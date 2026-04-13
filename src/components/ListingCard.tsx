@@ -15,11 +15,10 @@ type Listing = {
 };
 
 export default function ListingCard({ l }: { l: Listing }) {
-  const priceEUR = new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(l.price);
+  const priceEUR =
+    Math.round(l.price)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " €";
 
   const typeLabel =
     l.type === "Atico" ? "Ático" : l.type;

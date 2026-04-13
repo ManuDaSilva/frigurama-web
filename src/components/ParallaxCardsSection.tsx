@@ -10,7 +10,23 @@ type Card = {
   alt: string;
 };
 
-export default function ParallaxCardsSection() {
+const DEFAULT_IMAGES = [
+  "/proyectos/01.jpg",
+  "/proyectos/02.jpg",
+  "/proyectos/03.jpg",
+  "/proyectos/04.jpg",
+  "/proyectos/05.jpg",
+  "/proyectos/06.jpg",
+  "/proyectos/07.jpg",
+  "/proyectos/08.jpg",
+  "/proyectos/09.jpg",
+];
+
+export default function ParallaxCardsSection({
+  imageUrls,
+}: {
+  imageUrls?: { src: string }[];
+}) {
   const ref = useRef<HTMLElement | null>(null);
 
   // Scroll progresivo SOLO dentro de esta sección
@@ -25,18 +41,16 @@ export default function ParallaxCardsSection() {
   const yCol2 = useTransform(scrollYProgress, [0, 1], [380,   -930]);  // ancla, casi quieta
   const yCol3 = useTransform(scrollYProgress, [0, 1], [40,  -80]);  // la más rápida
 
-  // ✅ Mete aquí tus 9 imágenes (rutas en /public)
-  const cards: Card[] = [
-    { id: "01", src: "/proyectos/01.jpg", alt: "Proyecto 01" },
-    { id: "02", src: "/proyectos/02.jpg", alt: "Proyecto 02" },
-    { id: "03", src: "/proyectos/03.jpg", alt: "Proyecto 03" },
-    { id: "04", src: "/proyectos/04.jpg", alt: "Proyecto 04" },
-    { id: "05", src: "/proyectos/05.jpg", alt: "Proyecto 05" },
-    { id: "06", src: "/proyectos/06.jpg", alt: "Proyecto 06" },
-    { id: "07", src: "/proyectos/07.jpg", alt: "Proyecto 07" },
-    { id: "08", src: "/proyectos/08.jpg", alt: "Proyecto 08" },
-    { id: "09", src: "/proyectos/09.jpg", alt: "Proyecto 09" },
-  ];
+  const sources =
+    imageUrls && imageUrls.length > 0
+      ? imageUrls.map((img) => img.src)
+      : DEFAULT_IMAGES;
+
+  const cards: Card[] = sources.map((src, i) => ({
+    id: String(i + 1).padStart(2, "0"),
+    src,
+    alt: `Edificio u oficina ${i + 1}`,
+  }));
 
   // 3 columnas (3 + 3 + 3)
   const col1 = cards.slice(0, 3);

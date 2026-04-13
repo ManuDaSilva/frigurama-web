@@ -168,8 +168,8 @@ export default async function ListingsPage({
         <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] items-end gap-8 lg:gap-16">
           <h1 className="text-7xl lg:text-8xl xl:text-[9rem] font-light tracking-tight text-gray-900 leading-none">
             {typeFilter
-              ? PROPERTY_TYPES.find((t) => t.value === typeFilter)?.label ?? "Viviendas"
-              : "Viviendas"}
+              ? PROPERTY_TYPES.find((t) => t.value === typeFilter)?.label ?? "Todos"
+              : "Todos"}
           </h1>
           <div className="lg:pb-2 space-y-4 lg:border-l lg:border-gray-300 lg:pl-8">
             <p className="text-sm text-gray-500 leading-relaxed max-w-sm">
@@ -186,7 +186,7 @@ export default async function ListingsPage({
       </section>
 
       {/* ── Filtros ──────────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-12">
+      <section className="w-full px-6 lg:pl-8 lg:pr-12">
         <div className="border-t border-gray-300 pt-5">
 
           {/* Operación — pills de navegación (sin JS) */}

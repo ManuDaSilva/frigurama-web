@@ -104,20 +104,54 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
     applyEffectsRef.current = applyEffects;
 
     let locked = false;
+    let intersecting = false;
+    let hovering = false;
+
+    function resetTo(idx: number) {
+      indexRef.current = idx;
+      animatingRef.current = false;
+      mainImgRefs.current.forEach((el, i) => {
+        if (!el) return;
+        el.style.transition = "none";
+        el.style.opacity = i === idx ? "1" : "0";
+      });
+      sideImgRefs.current.forEach((el, i) => {
+        if (!el) return;
+        el.style.transition = "none";
+        el.style.transform = i === idx ? "translateY(0%)" : i < idx ? "translateY(-110%)" : "translateY(110%)";
+        el.style.opacity = i === idx ? "1" : "0";
+      });
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        intersecting = entry.isIntersecting;
         if (entry.isIntersecting) {
+          const fromBelow = entry.boundingClientRect.top > 0;
+          resetTo(fromBelow ? 0 : slides.length - 1);
           locked = true;
           accRef.current = 0;
         } else {
-          locked = false;
+          if (!hovering) locked = false;
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.75 }
     );
 
-    if (sectionRef.current) observer.observe(sectionRef.current);
+    const section = sectionRef.current;
+    if (section) observer.observe(section);
+
+    function onMouseEnter() {
+      hovering = true;
+      if (!locked) { locked = true; accRef.current = 0; }
+    }
+    function onMouseLeave() {
+      hovering = false;
+      if (!intersecting) locked = false;
+    }
+
+    section?.addEventListener("mouseenter", onMouseEnter);
+    section?.addEventListener("mouseleave", onMouseLeave);
 
     function onWheel(e: WheelEvent) {
       if (!locked) return;
@@ -127,12 +161,14 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
       if (Math.abs(accRef.current) < THRESHOLD) return;
 
       const direction = accRef.current > 0 ? 1 : -1;
-      accRef.current  = 0;
+      const accumulated = accRef.current;
+      accRef.current = 0;
 
       const next = indexRef.current + direction;
 
       if (next < 0 || next >= slides.length) {
         locked = false;
+        window.scrollBy({ top: accumulated });
         return;
       }
 
@@ -144,6 +180,8 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
     return () => {
       observer.disconnect();
       window.removeEventListener("wheel", onWheel);
+      section?.removeEventListener("mouseenter", onMouseEnter);
+      section?.removeEventListener("mouseleave", onMouseLeave);
     };
   }, []);
 

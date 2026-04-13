@@ -79,13 +79,15 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
     if (!el) return;
 
     let locked = false;
+    let intersecting = false;
+    let hovering = false;
     let currentIndex = 0;
     let accumulated = 0;
     const THRESHOLD = 70;
 
-    const goTo = (index: number) => {
+    const goTo = (index: number, instant = false) => {
       currentIndex = index;
-      el.scrollTo({ left: index * STEP, behavior: "smooth" });
+      el.scrollTo({ left: index * STEP, behavior: instant ? "auto" : "smooth" });
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -97,19 +99,14 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
       if (Math.abs(accumulated) < THRESHOLD) return;
 
       const direction = accumulated > 0 ? 1 : -1;
+      const acc = accumulated;
       accumulated = 0;
 
       const next = currentIndex + direction;
 
-      if (next < 0) {
-        // En el primer slide scrollando arriba → liberar
+      if (next < 0 || next >= slides.length) {
         locked = false;
-        return;
-      }
-
-      if (next >= slides.length) {
-        // En el último slide scrollando abajo → liberar
-        locked = false;
+        window.scrollBy({ top: acc });
         return;
       }
 
@@ -118,23 +115,49 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        intersecting = entry.isIntersecting;
         if (entry.isIntersecting) {
+          const fromBelow = entry.boundingClientRect.top > 0;
+          goTo(fromBelow ? 0 : slides.length - 1, true);
           locked = true;
           accumulated = 0;
-          currentIndex = Math.round(el.scrollLeft / STEP);
         } else {
-          locked = false;
+          if (!hovering) locked = false;
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.75 }
     );
 
+    function onMouseEnter() {
+      hovering = true;
+      if (!locked) { locked = true; accumulated = 0; }
+    }
+    function onMouseLeave() {
+      hovering = false;
+      if (!intersecting) locked = false;
+    }
+    function onPointerDown() {
+      hovering = true;
+      if (!locked) { locked = true; accumulated = 0; }
+    }
+    function onPointerUp() {
+      // Si el ratón sigue encima no hacemos nada — onMouseLeave se encarga
+    }
+
     observer.observe(el);
+    el.addEventListener("mouseenter", onMouseEnter);
+    el.addEventListener("mouseleave", onMouseLeave);
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointerup", onPointerUp);
     window.addEventListener("wheel", onWheel, { passive: false });
 
     return () => {
       observer.disconnect();
       window.removeEventListener("wheel", onWheel);
+      el.removeEventListener("mouseenter", onMouseEnter);
+      el.removeEventListener("mouseleave", onMouseLeave);
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointerup", onPointerUp);
     };
   }, []);
 

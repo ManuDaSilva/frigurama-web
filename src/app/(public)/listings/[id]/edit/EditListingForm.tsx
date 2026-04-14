@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "@/components/ImageUploader";
 import GoogleMap from "@/components/GoogleMap";
+import SortableImageGrid from "@/components/SortableImageGrid";
 import dynamic from "next/dynamic";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
@@ -732,43 +733,13 @@ export default function EditListingForm({
         <Card>
           <SectionTitle>Fotos</SectionTitle>
           <div className="space-y-4">
-            {imageUrls.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {imageUrls.map((url) => (
-                  <div key={url} className="relative group rounded-lg overflow-hidden border border-gray-200">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={url}
-                      alt="Foto del inmueble"
-                      className="w-full h-32 object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => removeImage(url)}
-                        className="text-xs bg-red-600 text-white px-2 py-1 rounded"
-                      >
-                        Eliminar
-                      </button>
-                      {coverUrl !== url && (
-                        <button
-                          type="button"
-                          onClick={() => setCoverUrl(url)}
-                          className="text-xs bg-white text-black px-2 py-1 rounded"
-                        >
-                          Portada
-                        </button>
-                      )}
-                    </div>
-                    {coverUrl === url && (
-                      <div className="absolute top-1 left-1 text-xs bg-black text-white px-1.5 py-0.5 rounded">
-                        Portada
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+            <SortableImageGrid
+              images={imageUrls.map((url) => ({ id: url, url }))}
+              coverUrl={coverUrl}
+              onReorder={(reordered) => setImageUrls(reordered.map((i) => i.url))}
+              onRemove={(img) => removeImage(img.url)}
+              onSetCover={(url) => setCoverUrl(url)}
+            />
             <div>
               <p className="text-sm text-gray-500 mb-2">Añadir fotos</p>
               <ImageUploader onUploaded={addImage} />

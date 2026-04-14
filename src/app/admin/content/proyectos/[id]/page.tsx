@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ImageUploader from "@/components/ImageUploader";
+import SortableImageGrid from "@/components/SortableImageGrid";
 import dynamic from "next/dynamic";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
@@ -205,39 +206,16 @@ export default function EditProyectoPage() {
               Fotos
             </h2>
 
-            {images.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {images.map((img) => (
-                  <div key={img.id} className="relative group rounded-lg overflow-hidden border border-gray-200">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.url} alt="" className="w-full h-32 object-cover" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => removeImage(img)}
-                        className="text-xs bg-red-600 text-white px-2 py-1 rounded"
-                      >
-                        Eliminar
-                      </button>
-                      {coverUrl !== img.url && (
-                        <button
-                          type="button"
-                          onClick={() => setCoverUrl(img.url)}
-                          className="text-xs bg-white text-black px-2 py-1 rounded"
-                        >
-                          Portada
-                        </button>
-                      )}
-                    </div>
-                    {coverUrl === img.url && (
-                      <div className="absolute top-1 left-1 text-xs bg-black text-white px-1.5 py-0.5 rounded">
-                        Portada
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+            <SortableImageGrid
+              images={images}
+              coverUrl={coverUrl}
+              onReorder={(reordered) => {
+                setImages(reordered);
+                if (!coverUrl) setCoverUrl(reordered[0]?.url ?? "");
+              }}
+              onRemove={removeImage}
+              onSetCover={setCoverUrl}
+            />
 
             <div>
               <p className="text-sm text-gray-500 mb-2">Añadir fotos</p>

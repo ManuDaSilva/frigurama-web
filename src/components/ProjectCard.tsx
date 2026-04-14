@@ -70,7 +70,9 @@ export default function ProjectCard({ p }: { p: Project }) {
         {/* Right — description preview */}
         {p.description && (
           <div className="shrink-0 text-right max-w-[140px]">
-            <p className="text-[11px] text-gray-400 leading-snug line-clamp-2">{p.description}</p>
+            <p className="text-[11px] text-gray-400 leading-snug line-clamp-2">
+              {p.description.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()}
+            </p>
           </div>
         )}
 

@@ -60,7 +60,6 @@ export default function ListingHero({
   );
 
   const [index, setIndex]   = useState(initialIndex);
-  const [fading, setFading] = useState(false);
   const pausedRef           = useRef(false);
   const resumeTimerRef      = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -83,13 +82,9 @@ export default function ListingHero({
     `Interés en ${title ?? "inmueble"}`
   )}`;
 
-  /* — navigation with fade — */
+  /* — navigation — */
   const goTo = useCallback((nextIndex: number) => {
-    setFading(true);
-    setTimeout(() => {
-      setIndex(nextIndex);
-      setFading(false);
-    }, 250);
+    setIndex(nextIndex);
   }, []);
 
   const pauseAndGoTo = (nextIndex: number) => {
@@ -106,11 +101,7 @@ export default function ListingHero({
     if (images.length <= 1) return;
     const timer = setInterval(() => {
       if (!pausedRef.current) {
-        setFading(true);
-        setTimeout(() => {
-          setIndex((prev) => (prev + 1) % images.length);
-          setFading(false);
-        }, 250);
+        setIndex((prev) => (prev + 1) % images.length);
       }
     }, 4500);
     return () => clearInterval(timer);
@@ -124,9 +115,8 @@ export default function ListingHero({
     []
   );
 
-  const currentImage  = images[index];
-  const hasMultiple   = images.length > 1;
-  const showDots      = hasMultiple && images.length <= 12;
+  const hasMultiple = images.length > 1;
+  const showDots    = hasMultiple && images.length <= 12;
 
   /* ── Render ─────────────────────────────────────────────────── */
 
@@ -229,27 +219,28 @@ export default function ListingHero({
 
         {/* ══ IMAGE PANEL ═════════════════════════════════════════ */}
         <div
-          className="relative order-1 lg:order-2 aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto bg-black"
+          className="relative order-1 lg:order-2 aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto bg-black overflow-hidden"
           onMouseEnter={() => { pausedRef.current = true; }}
           onMouseLeave={() => { pausedRef.current = false; }}
         >
-          {currentImage ? (
-            <Image
-              src={currentImage.url}
-              alt={title ?? "Inmueble"}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 60vw"
-              className={`object-cover transition-opacity duration-250 ${
-                fading ? "opacity-0" : "opacity-100"
-              }`}
-            />
-          ) : (
+          {images.length === 0 ? (
             <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-              <span className="text-sm text-gray-400 tracking-wide">
-                Sin imágenes
-              </span>
+              <span className="text-sm text-gray-400 tracking-wide">Sin imágenes</span>
             </div>
+          ) : (
+            images.map((img, i) => (
+              <Image
+                key={img.id}
+                src={img.url}
+                alt={title ?? "Inmueble"}
+                fill
+                priority={i === initialIndex}
+                sizes="(max-width: 1024px) 100vw, 60vw"
+                className={`object-cover transition-opacity duration-700 ease-in-out ${
+                  i === index ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            ))
           )}
 
           {/* Prev / Next arrows */}

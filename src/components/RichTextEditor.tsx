@@ -71,7 +71,7 @@ export default function RichTextEditor({ content, onChange, compact = false }: P
   return (
     <div className="border rounded-lg overflow-hidden bg-white">
       {/* ── Toolbar ─────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-0.5 border-b bg-gray-50 px-2 py-1.5 sticky top-14 z-10">
+      <div className={`flex flex-wrap items-center gap-0.5 border-b bg-gray-50 px-2 py-1.5 z-10 ${compact ? "" : "sticky top-14"}`}>
         <Group>
           <Btn active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()} title="Negrita">
             <b>B</b>

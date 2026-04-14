@@ -55,18 +55,10 @@ export default function Footer() {
 
             {/* Centro */}
             <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6 text-center justify-self-center">
-              <Link href="#" className={linkBase}>
-                08036. Muntaner, 0200
-              </Link>
-              <Link href="#" className={linkBase}>
-                934763494
-              </Link>
-              <Link href="mailto:info@frigurama.com" className={linkBase}>
-                info@frigurama.com
-              </Link>
-              <Link href="https://frigurama.com" className={linkBase}>
-                frigurama.com
-              </Link>
+              <span className={soon}>08036. Muntaner, 0200</span>
+              <span className={soon}>934763494</span>
+              <span className={soon}>info@frigurama.com</span>
+              <span className={soon}>frigurama.com</span>
             </div>
 
             {/* Derecha */}

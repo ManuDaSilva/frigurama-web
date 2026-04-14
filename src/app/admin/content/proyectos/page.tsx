@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import ImageUploader from "@/components/ImageUploader";
 
 type ProjectStatus = "en_proceso" | "terminado" | "proximamente";
 
@@ -197,18 +198,20 @@ export default function AdminProyectosPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-500 mb-1">URL de imagen</label>
-              <input
-                className="w-full border rounded px-3 py-2 text-sm"
-                value={form.coverUrl ?? ""}
-                onChange={(e) => setForm({ ...form, coverUrl: e.target.value })}
-                placeholder="https://..."
-              />
+              <label className="block text-xs text-gray-500 mb-1">Imagen de portada</label>
               {form.coverUrl && (
-                <div className="mt-2 relative w-40 h-28 rounded overflow-hidden border">
-                  <Image src={form.coverUrl} alt="preview" fill className="object-cover" />
-                </div>
+                <img src={form.coverUrl} alt="preview" className="w-40 h-28 object-cover rounded border mb-2" />
               )}
+              <div className="flex items-center gap-2">
+                <ImageUploader text="Subir" onUploaded={(url) => setForm({ ...form, coverUrl: url })} />
+                <input
+                  type="text"
+                  className="flex-1 border rounded px-2 py-1.5 text-xs"
+                  value={form.coverUrl ?? ""}
+                  onChange={(e) => setForm({ ...form, coverUrl: e.target.value })}
+                  placeholder="URL de la imagen"
+                />
+              </div>
             </div>
 
             <div className="sm:col-span-2">

@@ -5,6 +5,9 @@ import Link from "next/link";
 const linkBase =
   "block transition-colors duration-300 ease-out hover:text-[#e67e22]";
 
+const soon =
+  "block cursor-default transition-colors duration-300 ease-out hover:text-[#e67e22]";
+
 export default function Footer() {
   return (
     <footer className="w-full pb-0 bg-[#e7ecec]">
@@ -35,30 +38,18 @@ export default function Footer() {
             {/* Bloque izquierdo: 2 subcolumnas pegadas */}
             <div className="flex items-start gap-16">
               <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6">
-                <Link href="/company" className={linkBase}>
-                  Company
-                </Link>
-                <Link href="/about" className={linkBase}>
-                  About
-                </Link>
-                <Link href="/services" className={linkBase}>
-                  Servicios
-                </Link>
+                <span className={soon}>Company</span>
+                <span className={soon}>About</span>
+                <span className={soon}>Servicios</span>
                 <Link href="/privacy" className={linkBase}>
                   Política de privacidad
                 </Link>
-                <Link href="/cookies" className={linkBase}>
-                  Cookies
-                </Link>
+                <span className={soon}>Cookies</span>
               </div>
 
               <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6">
-                <Link href="/comunidad" className={linkBase}>
-                  Comunidad
-                </Link>
-                <Link href="/ayuda" className={linkBase}>
-                  Ayuda
-                </Link>
+                <span className={soon}>Comunidad</span>
+                <span className={soon}>Ayuda</span>
               </div>
             </div>
 

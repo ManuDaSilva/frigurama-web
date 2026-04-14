@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 type Project = {
   id: string;
@@ -25,6 +26,7 @@ export default function ProjectCard({ p }: { p: Project }) {
 
   return (
     <li className="group rounded-xl overflow-hidden border border-gray-200 bg-[#e8ebe8] hover:shadow-sm transition-shadow duration-300">
+      <Link href={`/projects/${p.id}`} className="block">
 
       {/* Image */}
       <div className="relative w-full aspect-[4/3] sm:aspect-[5/4] lg:aspect-[1/1] overflow-hidden">
@@ -73,6 +75,7 @@ export default function ProjectCard({ p }: { p: Project }) {
         )}
 
       </div>
+      </Link>
     </li>
   );
 }

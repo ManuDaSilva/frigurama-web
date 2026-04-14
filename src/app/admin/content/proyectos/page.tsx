@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import ImageUploader from "@/components/ImageUploader";
+import { useRouter } from "next/navigation";
 
 type ProjectStatus = "en_proceso" | "terminado" | "proximamente";
 
@@ -24,82 +24,43 @@ const STATUS_LABEL: Record<ProjectStatus, string> = {
   proximamente: "Próximamente",
 };
 
-const EMPTY: Omit<Project, "id"> = {
-  title: "",
-  description: "",
-  coverUrl: "",
-  location: "",
-  year: null,
-  status: "en_proceso",
-  published: true,
-};
+const EMPTY = { title: "", location: "", year: "", status: "en_proceso" as ProjectStatus };
 
 export default function AdminProyectosPage() {
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [form, setForm]         = useState<Omit<Project, "id"> | null>(null);
-  const [editId, setEditId]     = useState<string | null>(null);
-  const [saving, setSaving]     = useState(false);
-  const [message, setMessage]   = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [loading,  setLoading]  = useState(true);
+  const [showNew,  setShowNew]  = useState(false);
+  const [form,     setForm]     = useState({ ...EMPTY });
+  const [creating, setCreating] = useState(false);
 
   async function load() {
     const res = await fetch("/api/projects");
-    const data = await res.json();
-    setProjects(data);
+    setProjects(await res.json());
     setLoading(false);
   }
 
   useEffect(() => { load(); }, []);
 
-  function openNew() {
-    setEditId(null);
-    setForm({ ...EMPTY });
-    setMessage(null);
-  }
-
-  function openEdit(p: Project) {
-    setEditId(p.id);
-    setForm({
-      title:       p.title,
-      description: p.description ?? "",
-      coverUrl:    p.coverUrl    ?? "",
-      location:    p.location    ?? "",
-      year:        p.year,
-      status:      p.status,
-      published:   p.published,
-    });
-    setMessage(null);
-  }
-
-  function cancel() {
-    setForm(null);
-    setEditId(null);
-    setMessage(null);
-  }
-
-  async function handleSave() {
-    if (!form) return;
-    setSaving(true);
-    setMessage(null);
+  async function handleCreate() {
+    if (!form.title.trim()) return;
+    setCreating(true);
     try {
-      const url    = editId ? `/api/projects/${editId}` : "/api/projects";
-      const method = editId ? "PUT" : "POST";
-      const res    = await fetch(url, {
-        method,
+      const res = await fetch("/api/projects", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...form,
-          year: form.year ? Number(form.year) : null,
+          title:    form.title.trim(),
+          location: form.location || null,
+          year:     form.year ? Number(form.year) : null,
+          status:   form.status,
         }),
       });
       if (!res.ok) throw new Error();
-      setMessage({ type: "success", text: "Guardado correctamente." });
-      cancel();
-      load();
+      const created = await res.json();
+      router.push(`/admin/content/proyectos/${created.id}`);
     } catch {
-      setMessage({ type: "error", text: "Error al guardar." });
-    } finally {
-      setSaving(false);
+      setCreating(false);
     }
   }
 
@@ -125,9 +86,9 @@ export default function AdminProyectosPage() {
           <Link href="/projects" target="_blank" className="text-xs text-gray-400 hover:text-black transition-colors">
             Ver página →
           </Link>
-          {!form && (
+          {!showNew && (
             <button
-              onClick={openNew}
+              onClick={() => { setShowNew(true); setForm({ ...EMPTY }); }}
               className="px-4 py-2 bg-black text-white text-sm rounded hover:bg-black/80 transition"
             >
               + Nuevo proyecto
@@ -136,11 +97,10 @@ export default function AdminProyectosPage() {
         </div>
       </div>
 
-      {/* Formulario */}
-      {form && (
+      {/* Formulario nuevo */}
+      {showNew && (
         <div className="bg-white border rounded-xl p-6 space-y-4">
-          <h2 className="font-semibold text-lg">{editId ? "Editar proyecto" : "Nuevo proyecto"}</h2>
-
+          <h2 className="font-semibold text-lg">Nuevo proyecto</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-xs text-gray-500 mb-1">Título *</label>
@@ -149,30 +109,28 @@ export default function AdminProyectosPage() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder="Nombre del proyecto"
+                autoFocus
               />
             </div>
-
             <div>
               <label className="block text-xs text-gray-500 mb-1">Ubicación</label>
               <input
                 className="w-full border rounded px-3 py-2 text-sm"
-                value={form.location ?? ""}
+                value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
                 placeholder="Barcelona, Madrid…"
               />
             </div>
-
             <div>
               <label className="block text-xs text-gray-500 mb-1">Año</label>
               <input
                 type="number"
                 className="w-full border rounded px-3 py-2 text-sm"
-                value={form.year ?? ""}
-                onChange={(e) => setForm({ ...form, year: e.target.value ? Number(e.target.value) : null })}
+                value={form.year}
+                onChange={(e) => setForm({ ...form, year: e.target.value })}
                 placeholder="2024"
               />
             </div>
-
             <div>
               <label className="block text-xs text-gray-500 mb-1">Estado</label>
               <select
@@ -185,69 +143,21 @@ export default function AdminProyectosPage() {
                 <option value="proximamente">Próximamente</option>
               </select>
             </div>
-
-            <div className="flex items-center gap-2 pt-5">
-              <input
-                type="checkbox"
-                id="published"
-                checked={form.published}
-                onChange={(e) => setForm({ ...form, published: e.target.checked })}
-                className="w-4 h-4"
-              />
-              <label htmlFor="published" className="text-sm text-gray-600">Publicado</label>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-500 mb-1">Imagen de portada</label>
-              {form.coverUrl && (
-                <img src={form.coverUrl} alt="preview" className="w-40 h-28 object-cover rounded border mb-2" />
-              )}
-              <div className="flex items-center gap-2">
-                <ImageUploader text="Subir" onUploaded={(url) => setForm({ ...form, coverUrl: url })} />
-                <input
-                  type="text"
-                  className="flex-1 border rounded px-2 py-1.5 text-xs"
-                  value={form.coverUrl ?? ""}
-                  onChange={(e) => setForm({ ...form, coverUrl: e.target.value })}
-                  placeholder="URL de la imagen"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-500 mb-1">Descripción</label>
-              <textarea
-                className="w-full border rounded px-3 py-2 text-sm min-h-[100px]"
-                value={form.description ?? ""}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Breve descripción del proyecto…"
-              />
-            </div>
           </div>
-
-          <div className="flex items-center gap-4 pt-2">
+          <div className="flex items-center gap-3 pt-1">
             <button
-              onClick={handleSave}
-              disabled={saving || !form.title.trim()}
+              onClick={handleCreate}
+              disabled={creating || !form.title.trim()}
               className="px-6 py-2 bg-black text-white text-sm rounded hover:bg-black/80 disabled:opacity-50 transition"
             >
-              {saving ? "Guardando..." : "Guardar"}
+              {creating ? "Creando…" : "Crear y editar"}
             </button>
             <button
-              onClick={cancel}
+              onClick={() => setShowNew(false)}
               className="px-4 py-2 text-sm text-gray-500 hover:text-black transition"
             >
               Cancelar
             </button>
-            {message && (
-              <span className={`text-sm px-3 py-1.5 rounded-md border ${
-                message.type === "success"
-                  ? "bg-green-50 border-green-200 text-green-700"
-                  : "bg-red-50 border-red-200 text-red-700"
-              }`}>
-                {message.type === "success" ? "✓ " : "✕ "}{message.text}
-              </span>
-            )}
           </div>
         </div>
       )}
@@ -276,12 +186,12 @@ export default function AdminProyectosPage() {
                 </p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => openEdit(p)}
+                <Link
+                  href={`/admin/content/proyectos/${p.id}`}
                   className="px-3 py-1.5 text-xs border rounded hover:bg-gray-50 transition"
                 >
                   Editar
-                </button>
+                </Link>
                 <button
                   onClick={() => handleDelete(p.id)}
                   className="px-3 py-1.5 text-xs border border-red-200 text-red-500 rounded hover:bg-red-50 transition"

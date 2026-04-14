@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ImageUploader from "@/components/ImageUploader";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="border rounded-lg bg-white min-h-[200px] flex items-center justify-center text-sm text-gray-400">
+      Cargando editor…
+    </div>
+  ),
+});
 
 type ProjectStatus = "en_proceso" | "terminado" | "proximamente";
 
@@ -178,12 +188,13 @@ export default function EditProyectoPage() {
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs text-gray-500 mb-1">Descripción</label>
-                <textarea
-                  className="w-full border rounded px-3 py-2 text-sm min-h-[100px]"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Breve descripción del proyecto…"
-                />
+                {!loading && (
+                  <RichTextEditor
+                    compact
+                    content={description}
+                    onChange={setDescription}
+                  />
+                )}
               </div>
             </div>
           </div>

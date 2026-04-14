@@ -66,10 +66,13 @@ export async function generateMetadata(
     .filter(Boolean)
     .join(" ");
 
-  const rawDescription = listing.description
-    ? listing.description.length > 155
-      ? `${listing.description.slice(0, 152)}…`
-      : listing.description
+  const plainDescription = listing.description
+    ? listing.description.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
+    : "";
+  const rawDescription = plainDescription
+    ? plainDescription.length > 155
+      ? `${plainDescription.slice(0, 152)}…`
+      : plainDescription
     : autoDescription;
 
   const description = rawDescription || `Inmueble en ${location || "España"}`;
@@ -298,9 +301,10 @@ export default async function ListingDetail({
             <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-black/55">
               Descripción
             </h2>
-            <p className="text-[16px] leading-[1.75] text-black/72 whitespace-pre-wrap">
-              {listing.description}
-            </p>
+            <div
+              className="prose prose-sm text-black/72 max-w-none [&_h1]:text-2xl [&_h1]:font-semibold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold [&_p]:leading-[1.75] [&_p]:text-[16px] [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+              dangerouslySetInnerHTML={{ __html: listing.description }}
+            />
           </section>
         )}
 

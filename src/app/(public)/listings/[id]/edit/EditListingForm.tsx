@@ -4,6 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "@/components/ImageUploader";
 import GoogleMap from "@/components/GoogleMap";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="border rounded-lg bg-white min-h-[200px] flex items-center justify-center text-sm text-gray-400">
+      Cargando editor…
+    </div>
+  ),
+});
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -451,11 +461,10 @@ export default function EditListingForm({
               <Input value={title} onChange={setTitle} placeholder="Piso luminoso en el centro" />
             </Field>
             <Field label="Descripción">
-              <Textarea
-                value={description}
+              <RichTextEditor
+                compact
+                content={description}
                 onChange={setDescription}
-                rows={6}
-                placeholder="Describe el inmueble…"
               />
             </Field>
           </div>

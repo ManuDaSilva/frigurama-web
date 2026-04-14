@@ -62,9 +62,10 @@ export default async function ProjectDetailPage(
           {project.title}
         </h1>
         {project.description && (
-          <p className="text-sm text-gray-600 leading-relaxed max-w-lg">
-            {project.description}
-          </p>
+          <div
+            className="prose prose-sm text-gray-600 max-w-lg"
+            dangerouslySetInnerHTML={{ __html: project.description }}
+          />
         )}
       </div>
 

@@ -12,9 +12,10 @@ declare global {
 type Props = {
   content: string; // HTML inicial
   onChange: (html: string) => void;
+  compact?: boolean; // altura reducida para campos de descripción
 };
 
-export default function RichTextEditor({ content, onChange }: Props) {
+export default function RichTextEditor({ content, onChange, compact = false }: Props) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -113,8 +114,8 @@ export default function RichTextEditor({ content, onChange }: Props) {
 
       {/* ── Editor area ──────────────────────────────────── */}
       <div
-        className="
-          px-8 py-6 min-h-[480px] cursor-text
+        className={`
+          px-8 py-6 ${compact ? "min-h-[200px]" : "min-h-[480px]"} cursor-text
           [&_.ProseMirror]:outline-none
           [&_.ProseMirror_h1]:text-3xl [&_.ProseMirror_h1]:font-bold [&_.ProseMirror_h1]:leading-tight [&_.ProseMirror_h1]:mt-6 [&_.ProseMirror_h1]:mb-3
           [&_.ProseMirror_h2]:text-2xl [&_.ProseMirror_h2]:font-semibold [&_.ProseMirror_h2]:leading-tight [&_.ProseMirror_h2]:mt-5 [&_.ProseMirror_h2]:mb-2
@@ -127,7 +128,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
           [&_.ProseMirror_img]:rounded-xl [&_.ProseMirror_img]:my-6 [&_.ProseMirror_img]:max-w-full
           [&_.ProseMirror_hr]:border-black/10 [&_.ProseMirror_hr]:my-8
           [&_.ProseMirror_.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.ProseMirror_.is-editor-empty:first-child::before]:text-gray-300 [&_.ProseMirror_.is-editor-empty:first-child::before]:pointer-events-none [&_.ProseMirror_.is-editor-empty:first-child::before]:float-left [&_.ProseMirror_.is-editor-empty:first-child::before]:h-0
-        "
+        `}
         onClick={() => editor.commands.focus()}
       >
         <EditorContent editor={editor} />

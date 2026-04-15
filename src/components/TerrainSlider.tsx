@@ -53,11 +53,12 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
   const accRef          = useRef(0);
   const animatingRef    = useRef(false);
   const applyEffectsRef = useRef<((newIndex: number, direction: number) => void) | null>(null);
+  const dotsRef         = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
     const FADE_DUR     = 800;
     const ELEVATOR_DUR = 700;
-    const THRESHOLD    = 70;
+    const THRESHOLD    = 200;
 
     function applyEffects(newIndex: number, direction: number) {
       if (animatingRef.current) return;
@@ -98,6 +99,11 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
       }
 
       indexRef.current = newIndex;
+      dotsRef.current.forEach((dot, i) => {
+        if (!dot) return;
+        dot.style.width   = i === newIndex ? "20px" : "8px";
+        dot.style.opacity = i === newIndex ? "1"    : "0.4";
+      });
       setTimeout(() => { animatingRef.current = false; }, Math.max(FADE_DUR, ELEVATOR_DUR));
     }
 
@@ -121,21 +127,31 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
         el.style.transform = i === idx ? "translateY(0%)" : i < idx ? "translateY(-110%)" : "translateY(110%)";
         el.style.opacity = i === idx ? "1" : "0";
       });
+      dotsRef.current.forEach((dot, i) => {
+        if (!dot) return;
+        dot.style.width   = i === idx ? "20px" : "8px";
+        dot.style.opacity = i === idx ? "1"    : "0.4";
+      });
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        intersecting = entry.isIntersecting;
-        if (entry.isIntersecting) {
+        const ratio = entry.intersectionRatio;
+        if (ratio >= 0.75) {
+          // Bien dentro — resetear y bloquear
+          intersecting = true;
           const fromBelow = entry.boundingClientRect.top > 0;
           resetTo(fromBelow ? 0 : slides.length - 1);
           locked = true;
           accRef.current = 0;
-        } else {
+        } else if (ratio < 0.01) {
+          // Completamente fuera — desbloquear
+          intersecting = false;
           if (!hovering) locked = false;
         }
+        // Entre 0.01 y 0.75: mantener estado actual (histéresis)
       },
-      { threshold: 0.75 }
+      { threshold: [0, 0.75] }
     );
 
     const section = sectionRef.current;
@@ -143,7 +159,7 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
 
     function onMouseEnter() {
       hovering = true;
-      if (!locked) { locked = true; accRef.current = 0; }
+      // No forzar locked — el IntersectionObserver al 75% es el único responsable
     }
     function onMouseLeave() {
       hovering = false;
@@ -152,6 +168,21 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
 
     section?.addEventListener("mouseenter", onMouseEnter);
     section?.addEventListener("mouseleave", onMouseLeave);
+
+    // Touch — swipe vertical cambia slide sin bloquear el scroll de página
+    let touchStartY = 0;
+    function onTouchStart(e: TouchEvent) {
+      touchStartY = e.touches[0].clientY;
+    }
+    function onTouchEnd(e: TouchEvent) {
+      const deltaY = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(deltaY) < 60) return;
+      const direction = deltaY > 0 ? 1 : -1;
+      const next = indexRef.current + direction;
+      if (next >= 0 && next < slides.length) applyEffects(next, direction);
+    }
+    section?.addEventListener("touchstart", onTouchStart, { passive: true });
+    section?.addEventListener("touchend",   onTouchEnd,   { passive: true });
 
     function onWheel(e: WheelEvent) {
       if (!locked) return;
@@ -182,6 +213,8 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
       window.removeEventListener("wheel", onWheel);
       section?.removeEventListener("mouseenter", onMouseEnter);
       section?.removeEventListener("mouseleave", onMouseLeave);
+      section?.removeEventListener("touchstart", onTouchStart);
+      section?.removeEventListener("touchend",   onTouchEnd);
     };
   }, []);
 
@@ -222,6 +255,17 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
             />
           </div>
         ))}
+        {/* Indicador de progreso */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
+          {slides.map((_, i) => (
+            <span
+              key={i}
+              ref={(el) => { dotsRef.current[i] = el; }}
+              className="block rounded-full bg-white transition-all duration-300"
+              style={{ width: i === 0 ? "20px" : "8px", height: "8px", opacity: i === 0 ? 1 : 0.4 }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* DERECHA (SLIDER + TEXTO) */}

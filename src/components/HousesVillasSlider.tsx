@@ -49,6 +49,7 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
     main: imageUrls?.[i]?.main || s.main,
     preview: imageUrls?.[i]?.preview || s.preview,
   }));
+  const sectionRef  = useRef<HTMLDivElement | null>(null);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState(0);
 
@@ -75,15 +76,16 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
 
   // Scroll hijack: congela la página y mueve las imágenes con la rueda
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
+    const el      = scrollerRef.current;
+    const section = sectionRef.current;
+    if (!el || !section) return;
 
     let locked = false;
     let intersecting = false;
     let hovering = false;
     let currentIndex = 0;
     let accumulated = 0;
-    const THRESHOLD = 70;
+    const THRESHOLD = 200;
 
     const goTo = (index: number, instant = false) => {
       currentIndex = index;
@@ -115,22 +117,27 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        intersecting = entry.isIntersecting;
-        if (entry.isIntersecting) {
+        const ratio = entry.intersectionRatio;
+        if (ratio >= 0.75) {
+          // Bien dentro — resetear y bloquear
+          intersecting = true;
           const fromBelow = entry.boundingClientRect.top > 0;
           goTo(fromBelow ? 0 : slides.length - 1, true);
           locked = true;
           accumulated = 0;
-        } else {
+        } else if (ratio < 0.01) {
+          // Completamente fuera — desbloquear
+          intersecting = false;
           if (!hovering) locked = false;
         }
+        // Entre 0.01 y 0.75: mantener estado actual (histéresis)
       },
-      { threshold: 0.75 }
+      { threshold: [0, 0.75] }
     );
 
     function onMouseEnter() {
       hovering = true;
-      if (!locked) { locked = true; accumulated = 0; }
+      // No forzar locked — solo el IntersectionObserver al 75% activa el hijack
     }
     function onMouseLeave() {
       hovering = false;
@@ -138,17 +145,41 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
     }
     function onPointerDown() {
       hovering = true;
-      if (!locked) { locked = true; accumulated = 0; }
+      // Ídem — no forzar locked desde eventos de puntero
     }
     function onPointerUp() {
       // Si el ratón sigue encima no hacemos nada — onMouseLeave se encarga
     }
 
-    observer.observe(el);
+    // Mantener currentIndex en sync con el scroll nativo (touch)
+    function onScrollSync() {
+      if (!el) return;
+      currentIndex = Math.max(0, Math.min(slides.length - 1, Math.round(el.scrollLeft / STEP)));
+    }
+    el.addEventListener("scroll", onScrollSync, { passive: true });
+
+    // Touch — swipe horizontal cambia slide
+    let touchStartX = 0;
+    function onTouchStart(e: TouchEvent) {
+      touchStartX = e.touches[0].clientX;
+    }
+    function onTouchEnd(e: TouchEvent) {
+      const deltaX = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(deltaX) < 60) return;
+      const direction = deltaX > 0 ? 1 : -1;
+      const next = Math.max(0, Math.min(slides.length - 1, currentIndex + direction));
+      goTo(next);
+    }
+
+    // Observar el div raíz (igual que ApartmentSlider con sectionRef)
+    // El scrollerRef (interno) activaba el 75% con la sección menos centrada
+    observer.observe(section);
     el.addEventListener("mouseenter", onMouseEnter);
     el.addEventListener("mouseleave", onMouseLeave);
     el.addEventListener("pointerdown", onPointerDown);
     el.addEventListener("pointerup", onPointerUp);
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchend",   onTouchEnd,   { passive: true });
     window.addEventListener("wheel", onWheel, { passive: false });
 
     return () => {
@@ -158,13 +189,16 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
       el.removeEventListener("mouseleave", onMouseLeave);
       el.removeEventListener("pointerdown", onPointerDown);
       el.removeEventListener("pointerup", onPointerUp);
+      el.removeEventListener("scroll",     onScrollSync);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend",   onTouchEnd);
     };
   }, []);
 
   const current = slides[active];
 
   return (
-    <div className={`group relative w-[1580px] ${className}`}>
+    <div ref={sectionRef} className={`group relative w-[1580px] ${className}`}>
       <div className="grid grid-cols-[700px_780px] items-end gap-16">
         {/* ZONA IZQUIERDA: preview + caption */}
         <div className="relative left-[-430px] top-[-20px] flex h-[430px] items-end">
@@ -218,6 +252,17 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Indicador de progreso */}
+          <div className="mt-4 flex items-center justify-center gap-2 pointer-events-none">
+            {slides.map((_, i) => (
+              <span
+                key={i}
+                className="block rounded-full bg-black transition-all duration-300"
+                style={{ width: i === active ? "20px" : "8px", height: "8px", opacity: i === active ? 1 : 0.3 }}
+              />
+            ))}
           </div>
 
         </div>

@@ -29,7 +29,7 @@ export default async function ContactPage() {
   const content: ContactContent = (row?.content as ContactContent) ?? DEFAULT_CONTACT;
 
   return (
-    <main className="w-full min-h-screen bg-[#e7ecec] text-black font-sans pt-[81px]">
+    <main className="w-full min-h-screen bg-[#e7ecec] text-black font-sans pt-8 lg:pt-[81px]">
       <ContactSection content={content} />
 
       {/* Contact details */}

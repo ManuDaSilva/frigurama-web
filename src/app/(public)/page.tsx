@@ -37,12 +37,12 @@ export default function Home() {
           alt="Frigurama"
           width={780}
           height={84}
-          className="object-contain"
+          className="w-full max-w-[480px] md:max-w-[780px] object-contain h-auto"
         />
-        <h2 className="mt-12 text-xl font-light font-editorial">
+        <h2 className="mt-8 md:mt-12 text-base md:text-xl font-light font-editorial">
           For Modern Property Owners
         </h2>
-        <p className="max-w-6xl text-2xl mt-8 leading-[1.15]">
+        <p className="max-w-6xl text-base md:text-xl lg:text-2xl mt-6 md:mt-8 leading-[1.15] px-2 md:px-0">
           EN ®FRIGURAMA TRANSFORMAMOS ESPACIOS EN VALOR. GESTIÓN INMOBILIARIA 360°
           CON METODOLOGÍA PROPIA Y ENFOQUE EN MEDIR RESULTADOS.
         </p>
@@ -55,12 +55,12 @@ export default function Home() {
       </section>
 
       {/* ── APARTAMENTOS ─────────────────────────────────────────────── */}
-      <section className="bg-[#e7ecec] py-24 overflow-hidden">
-        <div className="flex items-start gap-16 pl-16">
-          {/* Izquierda: título + botón + descripción */}
-          <div className="pt-2 w-[360px] shrink-0">
+      <section className="bg-[#e7ecec] py-16 md:py-24 overflow-hidden">
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-16 px-5 md:px-8 lg:pl-16 lg:pr-0">
+          {/* Título + botón + descripción */}
+          <div className="pt-2 w-full lg:w-[360px] shrink-0">
             <div className="flex items-start gap-4">
-              <h2 className="text-[36px] font-light tracking-tight uppercase leading-tight">
+              <h2 className="text-[28px] md:text-[36px] font-light tracking-tight uppercase leading-tight">
                 APARTAMENTOS
               </h2>
               <Link href="/listings?type=Apartamento">
@@ -69,7 +69,7 @@ export default function Home() {
                 </button>
               </Link>
             </div>
-            <p className="mt-8 leading-[1.15] text-[17px] text-neutral-700 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
+            <p className="mt-6 leading-[1.15] text-[15px] md:text-[17px] text-neutral-700 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
               Proyectos pensados para disfrutar la vida en la ciudad, con
               comodidad y elegancia en equilibrio, con áreas comunes
               inspiradoras, circulaciones eficientes y una estética sobria que
@@ -77,21 +77,21 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Slider: se extiende hasta el borde derecho */}
-          <div className="flex-1 min-w-0">
+          {/* Slider */}
+          <div className="w-full lg:flex-1 lg:min-w-0">
             <ApartmentSlider imageUrls={portada.apartments?.slides} />
           </div>
         </div>
       </section>
 
       {/* ── CASAS Y VILLAS ───────────────────────────────────────────── */}
-      <section className="bg-[#e7ecec] py-24 overflow-hidden">
-        <div className="flex items-start gap-16 pl-16">
+      <section className="bg-[#e7ecec] py-16 md:py-24 overflow-hidden">
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-16 px-5 md:px-8 lg:pl-16 lg:pr-0">
 
-          {/* Izquierda: título + botón + descripción */}
-          <div className="pt-2 w-[360px] shrink-0">
+          {/* Título + botón + descripción */}
+          <div className="pt-2 w-full lg:w-[360px] shrink-0">
             <div className="flex items-start gap-4">
-              <h2 className="text-[36px] font-light tracking-tight uppercase leading-tight">
+              <h2 className="text-[28px] md:text-[36px] font-light tracking-tight uppercase leading-tight">
                 CASAS Y VILLAS
               </h2>
               <Link href="/listings?type=Casa">
@@ -100,7 +100,7 @@ export default function Home() {
                 </button>
               </Link>
             </div>
-            <p className="mt-8 leading-[1.15] text-[17px] text-neutral-700 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
+            <p className="mt-6 leading-[1.15] text-[15px] md:text-[17px] text-neutral-700 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
               Proyectos pensados para disfrutar la vida en la ciudad, con
               comodidad y elegancia en equilibrio, con áreas comunes
               inspiradoras, circulaciones eficientes y una estética sobria que
@@ -108,8 +108,8 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Slider: se extiende hasta el borde derecho */}
-          <div className="flex-1 min-w-0">
+          {/* Slider */}
+          <div className="w-full lg:flex-1 lg:min-w-0">
             <HousesVillasSlider imageUrls={portada.houses?.slides} />
           </div>
 
@@ -120,12 +120,12 @@ export default function Home() {
       <ParallaxCardsSection imageUrls={portada.offices?.slides} />
 
       {/* ── TERRENOS / NAVES INDUSTRIALES ────────────────────────────── */}
-      <section className="bg-[#e7ecec] py-24 overflow-hidden">
-        <div className="flex items-start gap-16 pl-16">
-          {/* Izquierda: título + botón + descripción */}
-          <div className="pt-2 w-[360px] shrink-0">
+      <section className="bg-[#e7ecec] py-16 md:py-24 overflow-hidden">
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-16 px-5 md:px-8 lg:pl-16 lg:pr-0">
+          {/* Título + botón + descripción */}
+          <div className="pt-2 w-full lg:w-[360px] shrink-0">
             <div className="flex items-start gap-4">
-              <h2 className="text-[36px] font-light tracking-tight uppercase leading-tight">
+              <h2 className="text-[28px] md:text-[36px] font-light tracking-tight uppercase leading-tight">
                 TERRENOS/<br />NAVES INDUSTRIALES
               </h2>
               <Link href="/listings?type=Terreno">
@@ -134,7 +134,7 @@ export default function Home() {
                 </button>
               </Link>
             </div>
-            <p className="mt-8 leading-[1.15] text-[17px] text-neutral-700 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
+            <p className="mt-6 leading-[1.15] text-[15px] md:text-[17px] text-neutral-700 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
               Proyectos industriales y desarrollos de terrenos concebidos para
               optimizar la experiencia de trabajo y operación, donde la
               funcionalidad, la eficiencia y el diseño se integran de forma
@@ -143,8 +143,8 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Slider: se extiende hasta el borde derecho */}
-          <div className="flex-1 min-w-0">
+          {/* Slider */}
+          <div className="w-full lg:flex-1 lg:min-w-0">
             <TerrainSlider imageUrls={portada.terrain?.slides} />
           </div>
         </div>

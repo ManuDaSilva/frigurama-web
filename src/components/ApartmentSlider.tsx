@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 const THUMB_H = 575;
 const IMG_H   = 455;
@@ -51,6 +51,22 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
   const animatingRef    = useRef(false);
   const applyEffectsRef = useRef<((newIndex: number, direction: number) => void) | null>(null);
   const dotsRef         = useRef<(HTMLSpanElement | null)[]>([]);
+
+  // Mobile carousel
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
+  const [mobileIdx, setMobileIdx] = useState(0);
+
+  // Sync active dot for mobile carousel
+  useEffect(() => {
+    const el = mobileScrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const idx = Math.round(el.scrollLeft / el.offsetWidth);
+      setMobileIdx(Math.max(0, Math.min(slides.length - 1, idx)));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const FADE_DUR     = 800;
@@ -132,6 +148,8 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
     // threshold [0, 0.75]: bloquea al 75%, desbloquea solo al 0% (histéresis)
     const observer = new IntersectionObserver(
       ([entry]) => {
+        // No activar scroll hijack en móvil/tablet
+        if (window.matchMedia("(max-width: 1023px)").matches) return;
         const ratio = entry.intersectionRatio;
         if (ratio >= 0.75) {
           intersecting = true;
@@ -182,6 +200,8 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
 
     function onWheel(e: WheelEvent) {
       if (!locked) return;
+      // No scroll hijack en móvil/tablet
+      if (window.matchMedia("(max-width: 1023px)").matches) return;
       e.preventDefault();
 
       accRef.current += e.deltaY;
@@ -221,7 +241,45 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
   }
 
   return (
-    <div ref={sectionRef} className="flex items-center">
+    <>
+    {/* ── CARRUSEL MÓVIL / TABLET (below lg) ── */}
+    <div className="block lg:hidden w-full">
+      <div
+        ref={mobileScrollRef}
+        className="flex overflow-x-auto snap-x snap-mandatory gap-4"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {slides.map((slide) => (
+          <div key={slide.id} className="snap-start shrink-0 w-full">
+            <div className="relative w-full overflow-hidden rounded-[20px] shadow-lg bg-[#d8dedd]" style={{ aspectRatio: "4/3" }}>
+              <Image
+                src={slide.main}
+                alt={slide.caption}
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
+            <p className="mt-4 text-center text-[11px] tracking-[0.15em] uppercase text-black/55 px-4">
+              {slide.caption}
+            </p>
+          </div>
+        ))}
+      </div>
+      {/* Dots */}
+      <div className="flex items-center justify-center gap-2 mt-5">
+        {slides.map((_, i) => (
+          <span
+            key={i}
+            className="block rounded-full bg-black transition-all duration-300"
+            style={{ width: i === mobileIdx ? "20px" : "8px", height: "8px", opacity: i === mobileIdx ? 1 : 0.3 }}
+          />
+        ))}
+      </div>
+    </div>
+
+    {/* ── SLIDER DESKTOP (lg+) ── */}
+    <div ref={sectionRef} className="hidden lg:flex items-center">
       <div className="grid grid-cols-[800px_1fr] gap-x-16 items-center w-full">
 
         {/* IMAGEN GRANDE — crossfade por opacity */}
@@ -314,5 +372,6 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
 </div>
       </div>
     </div>
+    </>
   );
 }

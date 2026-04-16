@@ -16,10 +16,10 @@ export default function Footer() {
           className="
             relative
             w-full
-            h-[220px]
-            px-10
-            rounded-tl-[64px]
-            rounded-tr-[64px]
+            h-auto lg:h-[220px]
+            px-6 lg:px-10
+            py-10 lg:py-0
+            rounded-tl-[40px] rounded-tr-[40px] lg:rounded-tl-[64px] lg:rounded-tr-[64px]
             border border-black/8
             shadow-[0_8px_24px_rgba(0,0,0,0.14)]
             bg-[rgba(0,0,0,0.42)]
@@ -33,11 +33,11 @@ export default function Footer() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.04),rgba(0,0,0,0.35)_65%,rgba(0,0,0,0.52))]" />
           </div>
 
-          {/* 3 columnas reales */}
-          <div className="relative z-10 grid h-full grid-cols-[0.2fr_1fr_auto] items-center">
-            {/* Bloque izquierdo: 2 subcolumnas pegadas */}
-            <div className="flex items-start gap-16">
-              <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6">
+          {/* Grid: 1 columna en móvil, 3 columnas en desktop */}
+          <div className="relative z-10 grid h-full grid-cols-1 lg:grid-cols-[0.2fr_1fr_auto] items-center gap-y-8 lg:gap-y-0">
+            {/* Bloque izquierdo */}
+            <div className="flex items-start justify-center lg:justify-start gap-8 lg:gap-16">
+              <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6 text-center lg:text-left">
                 <span className={soon}>Company</span>
                 <span className={soon}>About</span>
                 <span className={soon}>Servicios</span>
@@ -47,7 +47,7 @@ export default function Footer() {
                 <span className={soon}>Cookies</span>
               </div>
 
-              <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6">
+              <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6 text-center lg:text-left">
                 <span className={soon}>Comunidad</span>
                 <span className={soon}>Ayuda</span>
               </div>
@@ -62,7 +62,7 @@ export default function Footer() {
             </div>
 
             {/* Derecha */}
-            <div className="justify-self-end text-right text-white/60">
+            <div className="justify-self-center lg:justify-self-end text-center lg:text-right text-white/60">
               <div className="text-[13px] tracking-[0.22em] uppercase transition-colors duration-300 ease-out hover:text-[#e67e22]">
                 Frigurama_SL
               </div>

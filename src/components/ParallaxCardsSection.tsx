@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 type Card = {
@@ -28,6 +28,15 @@ export default function ParallaxCardsSection({
   imageUrls?: { src: string }[];
 }) {
   const ref = useRef<HTMLElement | null>(null);
+
+  // Detectar móvil/tablet para deshabilitar parallax
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Scroll progresivo SOLO dentro de esta sección
   const { scrollYProgress } = useScroll({
@@ -74,7 +83,7 @@ export default function ParallaxCardsSection({
           <div className="col-span-12 lg:col-span-3">
             <div className="lg:sticky lg:top-32">
               <div className="flex items-start gap-4">
-                <h2 className="text-[36px] font-light tracking-tight uppercase leading-tight">
+                <h2 className="text-[28px] md:text-[36px] font-light tracking-tight uppercase leading-tight">
                   EDIFICIOS<br />Y OFICINAS
                 </h2>
                 <a href="/listings?type=Oficina">
@@ -94,19 +103,19 @@ export default function ParallaxCardsSection({
           {/* Derecha: grid 3 columnas con parallax */}
           <div className="col-span-12 lg:col-span-9">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <motion.div style={{ y: yCol1 }} className="flex flex-col gap-6">
+              <motion.div style={{ y: isMobile ? 0 : yCol1 }} className="flex flex-col gap-6">
                 {col1.map((c) => (
                   <CardItem key={c.id} card={c} />
                 ))}
               </motion.div>
 
-              <motion.div style={{ y: yCol2 }} className="flex flex-col gap-6">
+              <motion.div style={{ y: isMobile ? 0 : yCol2 }} className="flex flex-col gap-6">
                 {col2.map((c) => (
                   <CardItem key={c.id} card={c} />
                 ))}
               </motion.div>
 
-              <motion.div style={{ y: yCol3 }} className="flex flex-col gap-6">
+              <motion.div style={{ y: isMobile ? 0 : yCol3 }} className="flex flex-col gap-6">
                 {col3.map((c) => (
                   <CardItem key={c.id} card={c} />
                 ))}

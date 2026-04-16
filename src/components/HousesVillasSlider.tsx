@@ -94,6 +94,8 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
 
     const onWheel = (e: WheelEvent) => {
       if (!locked) return;
+      // No scroll hijack en móvil/tablet
+      if (window.matchMedia("(max-width: 1023px)").matches) return;
       e.preventDefault();
 
       accumulated += e.deltaY;
@@ -117,6 +119,8 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        // No activar scroll hijack en móvil/tablet
+        if (window.matchMedia("(max-width: 1023px)").matches) return;
         const ratio = entry.intersectionRatio;
         if (ratio >= 0.75) {
           // Bien dentro — resetear y bloquear
@@ -198,10 +202,10 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
   const current = slides[active];
 
   return (
-    <div ref={sectionRef} className={`group relative w-[1580px] ${className}`}>
-      <div className="grid grid-cols-[700px_780px] items-end gap-16">
-        {/* ZONA IZQUIERDA: preview + caption */}
-        <div className="relative left-[-430px] top-[-20px] flex h-[430px] items-end">
+    <div ref={sectionRef} className={`group relative w-full lg:w-[1580px] ${className}`}>
+      <div className="flex flex-col lg:grid lg:grid-cols-[700px_780px] lg:items-end lg:gap-16">
+        {/* ZONA IZQUIERDA: preview + caption — solo desktop (hover) */}
+        <div className="hidden lg:flex relative left-[-430px] top-[-20px] h-[430px] items-end">
           <div className="flex items-center gap-12 opacity-0 translate-y-3 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
             <div className="relative h-[400px] w-[420px] shrink-0 overflow-hidden rounded-[28px] bg-[#e7ecec]">
               <Image
@@ -230,16 +234,16 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
         </div>
 
         {/* ZONA DERECHA: imagen principal */}
-          <div className="relative left-[-210px] w-[780px] shrink-0">
+          <div className="relative lg:left-[-210px] w-full lg:w-[780px] lg:shrink-0">
             <div
               ref={scrollerRef}
-              className="w-[780px] overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
-              style={{ scrollBehavior: "smooth" }}
+              className="w-full lg:w-[780px] overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
+              style={{ scrollBehavior: "smooth", scrollbarWidth: "none" }}
             >
-            <div className="flex gap-12">
+            <div className="flex gap-4 lg:gap-12">
               {slides.map((s) => (
-                <div key={s.id} className="snap-start shrink-0">
-                  <div className="relative h-[720px] w-[780px] overflow-hidden rounded-[30px] bg-[#e7ecec]">
+                <div key={s.id} className="snap-start shrink-0 w-full lg:w-auto">
+                  <div className="relative h-[280px] md:h-[420px] lg:h-[720px] w-full lg:w-[780px] overflow-hidden rounded-[20px] lg:rounded-[30px] bg-[#e7ecec]">
                     <Image
                       src={s.main}
                       alt="Casa / Villa"

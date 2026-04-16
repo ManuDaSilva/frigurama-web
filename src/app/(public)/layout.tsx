@@ -12,7 +12,7 @@ export default function PublicLayout({
       {/* Layout para que el footer quede al final */}
       <div className="min-h-screen flex flex-col">
         {/* separador del header fijo */}
-        <div className="pt-[49px] flex-1">{children}</div>
+        <div className="pt-[64px] lg:pt-[49px] flex-1">{children}</div>
         {/* footer estilo cabecero */}
         <Footer />
       </div>

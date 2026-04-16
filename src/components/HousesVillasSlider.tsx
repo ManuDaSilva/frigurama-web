@@ -64,7 +64,8 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
     if (!el) return;
 
     const onScroll = () => {
-      const i = Math.round(el.scrollLeft / STEP);
+      const step = window.matchMedia("(max-width: 1023px)").matches ? el.offsetWidth : STEP;
+      const i = Math.round(el.scrollLeft / step);
       setActive(Math.max(0, Math.min(slides.length - 1, i)));
     };
 
@@ -158,7 +159,8 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
     // Mantener currentIndex en sync con el scroll nativo (touch)
     function onScrollSync() {
       if (!el) return;
-      currentIndex = Math.max(0, Math.min(slides.length - 1, Math.round(el.scrollLeft / STEP)));
+      const step = window.matchMedia("(max-width: 1023px)").matches ? el.offsetWidth : STEP;
+      currentIndex = Math.max(0, Math.min(slides.length - 1, Math.round(el.scrollLeft / step)));
     }
     el.addEventListener("scroll", onScrollSync, { passive: true });
 
@@ -168,6 +170,8 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
       touchStartX = e.touches[0].clientX;
     }
     function onTouchEnd(e: TouchEvent) {
+      // En móvil/tablet: el snap nativo lo gestiona, no interferar con goTo
+      if (window.matchMedia("(max-width: 1023px)").matches) return;
       const deltaX = touchStartX - e.changedTouches[0].clientX;
       if (Math.abs(deltaX) < 60) return;
       const direction = deltaX > 0 ? 1 : -1;
@@ -240,7 +244,7 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
               className="w-full lg:w-[780px] overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
               style={{ scrollBehavior: "smooth", scrollbarWidth: "none" }}
             >
-            <div className="flex gap-4 lg:gap-12">
+            <div className="flex lg:gap-12">
               {slides.map((s) => (
                 <div key={s.id} className="snap-start shrink-0 w-full lg:w-auto">
                   <div className="relative h-[280px] md:h-[420px] lg:h-[720px] w-full lg:w-[780px] overflow-hidden rounded-[20px] lg:rounded-[30px] bg-[#e7ecec]">

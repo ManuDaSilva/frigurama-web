@@ -76,9 +76,9 @@ export default function ParallaxCardsSection({
       "
     >
       {/* “Altura de sección” para que el movimiento se aprecie bien */}
-      <div className="mx-auto max-w-[1900px] px-10 py-24">
+      <div className="mx-auto max-w-[1900px] px-4 md:px-8 lg:px-10 py-12 lg:py-24">
 
-        <div className="grid grid-cols-12 gap-10">
+        <div className="grid grid-cols-12 gap-6 lg:gap-10">
           {/* Columna izquierda: texto sticky */}
           <div className="col-span-12 lg:col-span-3">
             <div className="lg:sticky lg:top-32">

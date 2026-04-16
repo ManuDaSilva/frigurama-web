@@ -59,7 +59,7 @@ export default function ContactSection({ content = DEFAULT_CONTENT }: { content?
       className="relative w-full bg-[#e7ecec]"
     >
       <div className="mx-auto w-full max-w-[1920px] px-5 sm:px-10">
-        <div className="grid grid-cols-12 items-center gap-x-10 gap-y-10 py-24">
+        <div className="grid grid-cols-12 items-center gap-x-0 lg:gap-x-10 gap-y-8 lg:gap-y-10 py-12 lg:py-24">
           {/* Imagen izquierda */}
           <div className="col-span-12 md:col-span-4">
             <div

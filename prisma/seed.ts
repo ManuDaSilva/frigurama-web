@@ -83,7 +83,7 @@ async function main() {
         ctaText: "HAZ TU CONSULTA AQUÍ",
         phone: "934763494",
         email: "info@frigurama.com",
-        address: "08036. Muntaner, 0200",
+        address: "08036. Muntaner, 200",
       },
     },
   });

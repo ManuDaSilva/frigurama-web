@@ -27,7 +27,7 @@ const DEFAULT: ContactContent = {
   ctaText: "HAZ TU CONSULTA AQUÍ",
   phone: "934763494",
   email: "info@frigurama.com",
-  address: "08036. Muntaner, 0200",
+  address: "08036. Muntaner, 200",
 };
 
 export default function AdminContactoPage() {

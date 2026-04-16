@@ -55,7 +55,7 @@ export default function Footer() {
 
             {/* Centro */}
             <div className="text-white/60 text-[12px] tracking-[0.22em] uppercase leading-6 text-center justify-self-center">
-              <span className={soon}>08036. Muntaner, 0200</span>
+              <span className={soon}>08036. Muntaner, 200</span>
               <span className={soon}>934763494</span>
               <span className={soon}>info@frigurama.com</span>
               <span className={soon}>frigurama.com</span>

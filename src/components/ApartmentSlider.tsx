@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 
-const THUMB_H = 575;
-const IMG_H   = 455;
+const IMG_H    = 455;
+const SLIDE_H  = 760; // altura del contenedor desktop (= main image aspect-square 760px)
 
 type Slide = {
   id: number;
@@ -44,8 +44,7 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
   }));
 
   const sectionRef      = useRef<HTMLDivElement>(null);
-  const mainImgRefs     = useRef<(HTMLDivElement | null)[]>([]);
-  const sideImgRefs     = useRef<(HTMLButtonElement | null)[]>([]);
+  const slideRefs       = useRef<(HTMLDivElement | null)[]>([]);
   const indexRef        = useRef(0);
   const accRef          = useRef(0);
   const animatingRef    = useRef(false);
@@ -70,80 +69,10 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
   }, []);
 
   useEffect(() => {
-    const FADE_DUR     = 800;
-    const ELEVATOR_DUR = 700;
-    const THRESHOLD    = 200;
+    const DUR       = 700;
+    const THRESHOLD = 200;
 
-    function applyEffects(newIndex: number, direction: number) {
-      if (animatingRef.current) return;
-      animatingRef.current = true;
-
-      const oldIndex = indexRef.current;
-
-      // Efecto 1 — fade imagen central
-      mainImgRefs.current.forEach((el, i) => {
-        if (!el) return;
-        el.style.transition = `opacity ${FADE_DUR}ms ease`;
-        el.style.opacity    = i === newIndex ? "1" : "0";
-      });
-
-      // Efecto 2 — elevator libre imagen derecha
-      const outY    = direction > 0 ? "-110%" : "110%";
-      const inFromY = direction > 0 ? "110%"  : "-110%";
-
-      const outEl = sideImgRefs.current[oldIndex];
-      const inEl  = sideImgRefs.current[newIndex];
-
-      if (outEl) {
-        outEl.style.transition = `transform ${ELEVATOR_DUR}ms cubic-bezier(0.4,0,0.2,1), opacity ${ELEVATOR_DUR}ms ease`;
-        outEl.style.transform  = `translateY(${outY})`;
-        outEl.style.opacity    = "0";
-      }
-
-      if (inEl) {
-        inEl.style.transition = "none";
-        inEl.style.transform  = `translateY(${inFromY})`;
-        inEl.style.opacity    = "0";
-        void inEl.offsetHeight; // forzar reflow
-        inEl.style.transition = `transform ${ELEVATOR_DUR}ms cubic-bezier(0.4,0,0.2,1), opacity ${ELEVATOR_DUR}ms ease`;
-        inEl.style.transform  = "translateY(0%)";
-        inEl.style.opacity    = "1";
-      }
-
-      indexRef.current = newIndex;
-      dotsRef.current.forEach((dot, i) => {
-        if (!dot) return;
-        dot.style.width   = i === newIndex ? "20px" : "8px";
-        dot.style.opacity = i === newIndex ? "1"    : "0.4";
-      });
-      rightDotsRef.current.forEach((dot, i) => {
-        if (!dot) return;
-        dot.style.height  = i === newIndex ? "20px" : "8px";
-        dot.style.opacity = i === newIndex ? "1"    : "0.4";
-      });
-      setTimeout(() => { animatingRef.current = false; }, Math.max(FADE_DUR, ELEVATOR_DUR));
-    }
-
-    applyEffectsRef.current = applyEffects;
-
-    let locked      = false;
-    let intersecting = false;
-    let hovering    = false;
-
-    function resetTo(idx: number) {
-      indexRef.current = idx;
-      animatingRef.current = false;
-      mainImgRefs.current.forEach((el, i) => {
-        if (!el) return;
-        el.style.transition = "none";
-        el.style.opacity = i === idx ? "1" : "0";
-      });
-      sideImgRefs.current.forEach((el, i) => {
-        if (!el) return;
-        el.style.transition = "none";
-        el.style.transform = i === idx ? "translateY(0%)" : i < idx ? "translateY(-110%)" : "translateY(110%)";
-        el.style.opacity = i === idx ? "1" : "0";
-      });
+    function updateDots(idx: number) {
       dotsRef.current.forEach((dot, i) => {
         if (!dot) return;
         dot.style.width   = i === idx ? "20px" : "8px";
@@ -156,10 +85,58 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
       });
     }
 
+    function applyEffects(newIndex: number, direction: number) {
+      if (animatingRef.current) return;
+      animatingRef.current = true;
+
+      const oldIndex = indexRef.current;
+      const outY     = direction > 0 ? "-105%" : "105%";
+      const inFromY  = direction > 0 ? "105%"  : "-105%";
+
+      const outSlide = slideRefs.current[oldIndex];
+      const inSlide  = slideRefs.current[newIndex];
+
+      if (outSlide) {
+        outSlide.style.transition = `transform ${DUR}ms cubic-bezier(0.4,0,0.2,1), opacity ${DUR}ms ease`;
+        outSlide.style.transform  = `translateY(${outY})`;
+        outSlide.style.opacity    = "0";
+      }
+
+      if (inSlide) {
+        inSlide.style.transition = "none";
+        inSlide.style.transform  = `translateY(${inFromY})`;
+        inSlide.style.opacity    = "1";
+        void inSlide.offsetHeight; // forzar reflow
+        inSlide.style.transition = `transform ${DUR}ms cubic-bezier(0.4,0,0.2,1)`;
+        inSlide.style.transform  = "translateY(0%)";
+      }
+
+      indexRef.current = newIndex;
+      updateDots(newIndex);
+      setTimeout(() => { animatingRef.current = false; }, DUR);
+    }
+
+    applyEffectsRef.current = applyEffects;
+
+    let locked       = false;
+    let intersecting = false;
+    let hovering     = false;
+
+    function resetTo(idx: number) {
+      indexRef.current = idx;
+      animatingRef.current = false;
+      slideRefs.current.forEach((el, i) => {
+        if (!el) return;
+        el.style.transition = "none";
+        el.style.transform  = i === idx ? "translateY(0%)" : i < idx ? "translateY(-105%)" : "translateY(105%)";
+        el.style.opacity    = i === idx ? "1" : "0";
+      });
+      updateDots(idx);
+    }
+
     // threshold [0, 0.75]: bloquea al 75%, desbloquea solo al 0% (histéresis)
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // No activar scroll hijack en móvil/tablet
         if (window.matchMedia("(max-width: 1023px)").matches) return;
         const ratio = entry.intersectionRatio;
         if (ratio >= 0.75) {
@@ -172,7 +149,6 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
           intersecting = false;
           if (!hovering) locked = false;
         }
-        // Entre 0.01 y 0.75: zona muerta, no se cambia nada
       },
       { threshold: [0, 0.75] }
     );
@@ -180,12 +156,7 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
     const section = sectionRef.current;
     if (section) observer.observe(section);
 
-    function onMouseEnter() {
-      hovering = true;
-      // No forzar locked aquí — el IntersectionObserver al 75% es el único
-      // responsable de activar el hijack. Forzarlo en mouseenter bloquea
-      // el scroll cuando la sección apenas es visible al entrar desde abajo.
-    }
+    function onMouseEnter() { hovering = true; }
     function onMouseLeave() {
       hovering = false;
       if (!intersecting) locked = false;
@@ -194,11 +165,8 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
     section?.addEventListener("mouseenter", onMouseEnter);
     section?.addEventListener("mouseleave", onMouseLeave);
 
-    // Touch — swipe vertical cambia slide sin bloquear el scroll de página
     let touchStartY = 0;
-    function onTouchStart(e: TouchEvent) {
-      touchStartY = e.touches[0].clientY;
-    }
+    function onTouchStart(e: TouchEvent) { touchStartY = e.touches[0].clientY; }
     function onTouchEnd(e: TouchEvent) {
       const deltaY = touchStartY - e.changedTouches[0].clientY;
       if (Math.abs(deltaY) < 60) return;
@@ -211,18 +179,16 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
 
     function onWheel(e: WheelEvent) {
       if (!locked) return;
-      // No scroll hijack en móvil/tablet
       if (window.matchMedia("(max-width: 1023px)").matches) return;
       e.preventDefault();
 
       accRef.current += e.deltaY;
       if (Math.abs(accRef.current) < THRESHOLD) return;
 
-      const direction = accRef.current > 0 ? 1 : -1;
+      const direction  = accRef.current > 0 ? 1 : -1;
       const accumulated = accRef.current;
-      accRef.current = 0;
-
-      const next = indexRef.current + direction;
+      accRef.current   = 0;
+      const next       = indexRef.current + direction;
 
       if (next < 0 || next >= slides.length) {
         locked = false;
@@ -253,7 +219,7 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
 
   return (
     <>
-    {/* ── CARRUSEL MÓVIL / TABLET (below lg) ── */}
+    {/* ── CARRUSEL MÓVIL / TABLET (below lg) — sin cambios ── */}
     <div className="block lg:hidden w-full">
       <div
         ref={mobileScrollRef}
@@ -263,13 +229,7 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
         {slides.map((slide) => (
           <div key={slide.id} className="snap-start shrink-0 w-full">
             <div className="relative w-full overflow-hidden rounded-[20px] shadow-lg bg-[#d8dedd]" style={{ aspectRatio: "4/3" }}>
-              <Image
-                src={slide.main}
-                alt={slide.caption}
-                fill
-                className="object-cover"
-                sizes="100vw"
-              />
+              <Image src={slide.main} alt={slide.caption} fill className="object-cover" sizes="100vw" />
             </div>
             <p className="mt-4 text-center text-[11px] tracking-[0.15em] uppercase text-black/55 px-4">
               {slide.caption}
@@ -277,7 +237,6 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
           </div>
         ))}
       </div>
-      {/* Dots */}
       <div className="flex items-center justify-center gap-2 mt-5">
         {slides.map((_, i) => (
           <span
@@ -290,116 +249,86 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
     </div>
 
     {/* ── SLIDER DESKTOP (lg+) ── */}
-    <div ref={sectionRef} className="hidden lg:flex items-center">
-      <div className="grid grid-cols-[800px_1fr] gap-x-16 items-center w-full">
+    <div ref={sectionRef} className="hidden lg:flex items-center gap-6">
 
-        {/* IMAGEN GRANDE — crossfade por opacity */}
-        <div className="relative aspect-square w-[760px] overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(0,0,0,0.22)] bg-[#e7ecec]">
-          {slides.map((slide, i) => (
-            <div
-              key={slide.id}
-              ref={(el) => { mainImgRefs.current[i] = el; }}
-              className="absolute inset-0 transition-opacity duration-500 ease-in-out"
-              style={{ opacity: i === 0 ? 1 : 0 }}
-            >
+      {/* Stack de slides — overflow hidden recorta los que entran/salen */}
+      <div
+        className="relative flex-1 min-w-0 overflow-hidden rounded-[28px]"
+        style={{ height: `${SLIDE_H}px` }}
+      >
+        {slides.map((slide, i) => (
+          <div
+            key={slide.id}
+            ref={(el) => { slideRefs.current[i] = el; }}
+            className="absolute inset-0 grid items-center"
+            style={{
+              gridTemplateColumns: "760px 1fr",
+              columnGap: "64px",
+              transform: i === 0 ? "translateY(0%)" : "translateY(105%)",
+              opacity: i === 0 ? 1 : 0,
+            }}
+          >
+            {/* Columna izquierda — imagen principal */}
+            <div className="relative w-[760px] h-[760px] overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(0,0,0,0.22)] bg-[#e7ecec]">
               <Image
                 src={slide.main}
                 alt={slide.caption}
                 fill
-                sizes="1860px"
+                sizes="760px"
                 className="object-cover"
                 priority={i === 0}
               />
             </div>
-          ))}
-          {/* Indicador de progreso — clicable */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                ref={(el) => { dotsRef.current[i] = el; }}
-                onClick={() => goTo(i)}
-                className="block rounded-full bg-white transition-all duration-300 cursor-pointer"
-                style={{ width: i === 0 ? "20px" : "8px", height: "8px", opacity: i === 0 ? 1 : 0.4 }}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
-          </div>
-        </div>
 
-        {/* DERECHA — thumbnails + texto */}
-        <div className="relative flex flex-col items-stretch justify-center pr-10">
-
-          {/* Dots laterales — columna vertical clicable */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                ref={(el) => { rightDotsRef.current[i] = el; }}
-                onClick={() => goTo(i)}
-                className="block rounded-full bg-black transition-all duration-300 cursor-pointer hover:opacity-70"
-                style={{ width: "8px", height: i === 0 ? "20px" : "8px", opacity: i === 0 ? 1 : 0.4 }}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Wrapper de contención — solo este tiene overflow:hidden */}
-          <div style={{ height: `${THUMB_H}px`, overflow: "hidden" }}>
-
-          {/* Thumbnail container — overflow visible para que el elevator sea libre dentro del wrapper */}
-          <div
-            style={{
-              height: `${THUMB_H}px`,
-              position: "relative",
-              overflow: "visible",
-              zIndex: 1,
-            }}
-          >
-            {slides.map((slide, index) => (
-              <button
-                key={slide.id}
-                ref={(el) => { sideImgRefs.current[index] = el; }}
-                type="button"
-                onClick={() => goTo(index)}
-                className="w-full text-left"
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: `${THUMB_H}px`,
-                  display: "flex",
-                  flexDirection: "column",
-                  opacity: index === 0 ? 1 : 0,
-                  transform: index === 0 ? "translateY(0%)" : "translateY(110%)",
-                }}
+            {/* Columna derecha — imagen lateral + caption */}
+            <div className="flex flex-col items-center justify-center pr-10 h-full">
+              <div
+                className="relative w-full overflow-hidden rounded-[24px]"
+                style={{ height: `${IMG_H}px` }}
               >
-                {/* Imagen */}
-                <div
-                  className="relative w-full shrink-0 overflow-hidden rounded-[24px]"
-                  style={{ height: `${IMG_H}px` }}
-                >
-                  <Image src={slide.side} alt="Imagen lateral" fill className="object-cover" />
-                </div>
-
-                {/* Pie de foto */}
-                <div className="mt-6 text-center text-[11px] tracking-[0.18em] uppercase">
-                  <p className="mb-3 max-w-xs mx-auto">{slide.caption}</p>
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-black text-[10px]">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
-              </button>
-            ))}
+                <Image src={slide.side} alt={slide.caption} fill className="object-cover" />
+              </div>
+              <div className="mt-6 text-center text-[11px] tracking-[0.18em] uppercase">
+                <p className="mb-3 max-w-xs mx-auto">{slide.caption}</p>
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-black text-[10px]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+            </div>
           </div>
+        ))}
 
-          </div>{/* fin wrapper contención */}
-
-</div>
+        {/* Dots centrales — fijos sobre la imagen principal */}
+        <div className="absolute bottom-4 z-10 flex items-center gap-2" style={{ left: "380px", transform: "translateX(-50%)" }}>
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              ref={(el) => { dotsRef.current[i] = el; }}
+              onClick={() => goTo(i)}
+              className="block rounded-full bg-white transition-all duration-300 cursor-pointer"
+              style={{ width: i === 0 ? "20px" : "8px", height: "8px", opacity: i === 0 ? 1 : 0.4 }}
+              aria-label={`Slide ${i + 1}`}
+            />
+          ))}
+        </div>
       </div>
+
+      {/* Dots laterales derechos — fuera del stack, siempre visibles */}
+      <div className="flex flex-col items-center gap-3 shrink-0 pr-4">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            ref={(el) => { rightDotsRef.current[i] = el; }}
+            onClick={() => goTo(i)}
+            className="block rounded-full bg-black transition-all duration-300 cursor-pointer hover:opacity-70"
+            style={{ width: "8px", height: i === 0 ? "20px" : "8px", opacity: i === 0 ? 1 : 0.4 }}
+            aria-label={`Slide ${i + 1}`}
+          />
+        ))}
+      </div>
+
     </div>
     </>
   );

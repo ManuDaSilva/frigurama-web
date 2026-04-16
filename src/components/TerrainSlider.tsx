@@ -246,11 +246,11 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
 
   return (
     <>
-    {/* ── CARRUSEL MÓVIL / TABLET (below lg) ── */}
-    <div className="block lg:hidden w-full">
+    {/* ── CARRUSEL MÓVIL / TABLET / LAPTOP (below 2xl) ── */}
+    <div className="block 2xl:hidden w-full">
       <div
         ref={mobileScrollRef}
-        className="flex overflow-x-auto snap-x snap-mandatory gap-4"
+        className="flex overflow-x-auto snap-x snap-mandatory"
         style={{ scrollbarWidth: "none" }}
       >
         {slides.map((slide) => (
@@ -282,8 +282,8 @@ export default function TerrainSlider({ imageUrls }: Props = {}) {
       </div>
     </div>
 
-    {/* ── SLIDER DESKTOP (lg+) ── */}
-    <div ref={sectionRef} className="hidden lg:grid grid-cols-[800px_1fr] gap-x-16 items-start">
+    {/* ── SLIDER DESKTOP (2xl+) ── */}
+    <div ref={sectionRef} className="hidden 2xl:grid grid-cols-[760px_1fr] gap-x-16 items-start">
       {/* IMAGEN GRANDE (760x760) — crossfade por opacity */}
       <div
         className="

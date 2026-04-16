@@ -23,7 +23,7 @@ export default async function ProjectsPage() {
       <section className="w-full px-6 lg:pl-8 lg:pr-12 pt-16 pb-14">
         <p className="text-[10px] tracking-[0.38em] uppercase text-gray-400 mb-5">(02)</p>
         <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] items-end gap-8 lg:gap-16">
-          <h1 className="text-7xl lg:text-8xl xl:text-[9rem] font-light tracking-tight text-gray-900 leading-none">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl xl:text-8xl 2xl:text-[9rem] font-light tracking-tight text-gray-900 leading-none">
             Proyectos
           </h1>
           <div className="lg:pb-2 space-y-4 lg:border-l lg:border-gray-300 lg:pl-8">

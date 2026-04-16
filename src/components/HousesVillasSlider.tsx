@@ -64,7 +64,8 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
     if (!el) return;
 
     const onScroll = () => {
-      const step = window.matchMedia("(max-width: 1023px)").matches ? el.offsetWidth : STEP;
+      // Usar ancho del contenedor como step en pantallas < 2xl (layout fluido)
+      const step = window.matchMedia("(max-width: 1535px)").matches ? el.offsetWidth : STEP;
       const i = Math.round(el.scrollLeft / step);
       setActive(Math.max(0, Math.min(slides.length - 1, i)));
     };
@@ -90,13 +91,15 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
 
     const goTo = (index: number, instant = false) => {
       currentIndex = index;
-      el.scrollTo({ left: index * STEP, behavior: instant ? "auto" : "smooth" });
+      // En pantallas < 2xl el snap es full-width, en 2xl+ usa STEP fijo
+      const step = window.matchMedia("(max-width: 1535px)").matches ? el.offsetWidth : STEP;
+      el.scrollTo({ left: index * step, behavior: instant ? "auto" : "smooth" });
     };
 
     const onWheel = (e: WheelEvent) => {
       if (!locked) return;
-      // No scroll hijack en móvil/tablet
-      if (window.matchMedia("(max-width: 1023px)").matches) return;
+      // No scroll hijack bajo 2xl
+      if (window.matchMedia("(max-width: 1535px)").matches) return;
       e.preventDefault();
 
       accumulated += e.deltaY;
@@ -120,46 +123,35 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // No activar scroll hijack en móvil/tablet
-        if (window.matchMedia("(max-width: 1023px)").matches) return;
+        // No activar scroll hijack bajo 2xl
+        if (window.matchMedia("(max-width: 1535px)").matches) return;
         const ratio = entry.intersectionRatio;
         if (ratio >= 0.75) {
-          // Bien dentro — resetear y bloquear
           intersecting = true;
           const fromBelow = entry.boundingClientRect.top > 0;
           goTo(fromBelow ? 0 : slides.length - 1, true);
           locked = true;
           accumulated = 0;
         } else if (ratio < 0.01) {
-          // Completamente fuera — desbloquear
           intersecting = false;
           if (!hovering) locked = false;
         }
-        // Entre 0.01 y 0.75: mantener estado actual (histéresis)
       },
       { threshold: [0, 0.75] }
     );
 
-    function onMouseEnter() {
-      hovering = true;
-      // No forzar locked — solo el IntersectionObserver al 75% activa el hijack
-    }
+    function onMouseEnter() { hovering = true; }
     function onMouseLeave() {
       hovering = false;
       if (!intersecting) locked = false;
     }
-    function onPointerDown() {
-      hovering = true;
-      // Ídem — no forzar locked desde eventos de puntero
-    }
-    function onPointerUp() {
-      // Si el ratón sigue encima no hacemos nada — onMouseLeave se encarga
-    }
+    function onPointerDown() { hovering = true; }
+    function onPointerUp() {}
 
     // Mantener currentIndex en sync con el scroll nativo (touch)
     function onScrollSync() {
       if (!el) return;
-      const step = window.matchMedia("(max-width: 1023px)").matches ? el.offsetWidth : STEP;
+      const step = window.matchMedia("(max-width: 1535px)").matches ? el.offsetWidth : STEP;
       currentIndex = Math.max(0, Math.min(slides.length - 1, Math.round(el.scrollLeft / step)));
     }
     el.addEventListener("scroll", onScrollSync, { passive: true });
@@ -170,8 +162,8 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
       touchStartX = e.touches[0].clientX;
     }
     function onTouchEnd(e: TouchEvent) {
-      // En móvil/tablet: el snap nativo lo gestiona, no interferar con goTo
-      if (window.matchMedia("(max-width: 1023px)").matches) return;
+      // En pantallas < 2xl: el snap nativo lo gestiona, no interferar
+      if (window.matchMedia("(max-width: 1535px)").matches) return;
       const deltaX = touchStartX - e.changedTouches[0].clientX;
       if (Math.abs(deltaX) < 60) return;
       const direction = deltaX > 0 ? 1 : -1;
@@ -179,8 +171,6 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
       goTo(next);
     }
 
-    // Observar el div raíz (igual que ApartmentSlider con sectionRef)
-    // El scrollerRef (interno) activaba el 75% con la sección menos centrada
     observer.observe(section);
     el.addEventListener("mouseenter", onMouseEnter);
     el.addEventListener("mouseleave", onMouseLeave);
@@ -206,10 +196,11 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
   const current = slides[active];
 
   return (
-    <div ref={sectionRef} className={`group relative w-full lg:w-[1580px] ${className}`}>
-      <div className="flex flex-col lg:grid lg:grid-cols-[700px_780px] lg:items-end lg:gap-16">
-        {/* ZONA IZQUIERDA: preview + caption — solo desktop (hover) */}
-        <div className="hidden lg:flex relative left-[-430px] top-[-20px] h-[430px] items-end">
+    <div ref={sectionRef} className={`group relative w-full 2xl:w-[1580px] ${className}`}>
+      <div className="flex flex-col 2xl:grid 2xl:grid-cols-[700px_780px] 2xl:items-end 2xl:gap-16">
+
+        {/* ZONA IZQUIERDA: preview + caption — solo 2xl+ (hover) */}
+        <div className="hidden 2xl:flex relative left-[-430px] top-[-20px] h-[430px] items-end">
           <div className="flex items-center gap-12 opacity-0 translate-y-3 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
             <div className="relative h-[400px] w-[420px] shrink-0 overflow-hidden rounded-[28px] bg-[#e7ecec]">
               <Image
@@ -238,22 +229,22 @@ export default function HousesVillasSlider({ className = "", imageUrls }: Props)
         </div>
 
         {/* ZONA DERECHA: imagen principal */}
-          <div className="relative lg:left-[-210px] w-full lg:w-[780px] lg:shrink-0">
-            <div
-              ref={scrollerRef}
-              className="w-full lg:w-[780px] overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
-              style={{ scrollBehavior: "smooth", scrollbarWidth: "none" }}
-            >
-            <div className="flex lg:gap-12">
+        <div className="relative 2xl:left-[-210px] w-full 2xl:w-[780px] 2xl:shrink-0">
+          <div
+            ref={scrollerRef}
+            className="w-full 2xl:w-[780px] overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
+            style={{ scrollBehavior: "smooth", scrollbarWidth: "none" }}
+          >
+            <div className="flex 2xl:gap-12">
               {slides.map((s) => (
-                <div key={s.id} className="snap-start shrink-0 w-full lg:w-auto">
-                  <div className="relative h-[280px] md:h-[420px] lg:h-[720px] w-full lg:w-[780px] overflow-hidden rounded-[20px] lg:rounded-[30px] bg-[#e7ecec]">
+                <div key={s.id} className="snap-start shrink-0 w-full 2xl:w-auto">
+                  <div className="relative h-[280px] md:h-[420px] lg:h-[620px] 2xl:h-[720px] w-full 2xl:w-[780px] overflow-hidden rounded-[20px] md:rounded-[30px] bg-[#e7ecec]">
                     <Image
                       src={s.main}
                       alt="Casa / Villa"
                       fill
                       className="object-cover object-center"
-                      sizes="660px"
+                      sizes="(min-width: 1536px) 780px, 100vw"
                       priority={s.id === 1}
                     />
                   </div>

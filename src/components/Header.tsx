@@ -16,7 +16,7 @@ export default function Header() {
         <div
           className="
           hidden lg:flex
-          w-[1910px]
+          w-full
           items-center justify-between
           h-[81px]
           px-10

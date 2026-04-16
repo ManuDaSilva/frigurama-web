@@ -50,7 +50,8 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
   const accRef          = useRef(0);
   const animatingRef    = useRef(false);
   const applyEffectsRef = useRef<((newIndex: number, direction: number) => void) | null>(null);
-  const dotsRef         = useRef<(HTMLSpanElement | null)[]>([]);
+  const dotsRef         = useRef<(HTMLButtonElement | null)[]>([]);
+  const rightDotsRef    = useRef<(HTMLButtonElement | null)[]>([]);
 
   // Mobile carousel
   const mobileScrollRef = useRef<HTMLDivElement>(null);
@@ -115,6 +116,11 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
         dot.style.width   = i === newIndex ? "20px" : "8px";
         dot.style.opacity = i === newIndex ? "1"    : "0.4";
       });
+      rightDotsRef.current.forEach((dot, i) => {
+        if (!dot) return;
+        dot.style.height  = i === newIndex ? "20px" : "8px";
+        dot.style.opacity = i === newIndex ? "1"    : "0.4";
+      });
       setTimeout(() => { animatingRef.current = false; }, Math.max(FADE_DUR, ELEVATOR_DUR));
     }
 
@@ -141,6 +147,11 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
       dotsRef.current.forEach((dot, i) => {
         if (!dot) return;
         dot.style.width   = i === idx ? "20px" : "8px";
+        dot.style.opacity = i === idx ? "1"    : "0.4";
+      });
+      rightDotsRef.current.forEach((dot, i) => {
+        if (!dot) return;
+        dot.style.height  = i === idx ? "20px" : "8px";
         dot.style.opacity = i === idx ? "1"    : "0.4";
       });
     }
@@ -301,21 +312,39 @@ export default function ApartmentSlider({ imageUrls }: Props = {}) {
               />
             </div>
           ))}
-          {/* Indicador de progreso */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
+          {/* Indicador de progreso — clicable */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
             {slides.map((_, i) => (
-              <span
+              <button
                 key={i}
+                type="button"
                 ref={(el) => { dotsRef.current[i] = el; }}
-                className="block rounded-full bg-white transition-all duration-300"
+                onClick={() => goTo(i)}
+                className="block rounded-full bg-white transition-all duration-300 cursor-pointer"
                 style={{ width: i === 0 ? "20px" : "8px", height: "8px", opacity: i === 0 ? 1 : 0.4 }}
+                aria-label={`Slide ${i + 1}`}
               />
             ))}
           </div>
         </div>
 
         {/* DERECHA — thumbnails + texto */}
-        <div className="flex flex-col items-stretch justify-center pr-10">
+        <div className="relative flex flex-col items-stretch justify-center pr-10">
+
+          {/* Dots laterales — columna vertical clicable */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                ref={(el) => { rightDotsRef.current[i] = el; }}
+                onClick={() => goTo(i)}
+                className="block rounded-full bg-black transition-all duration-300 cursor-pointer hover:opacity-70"
+                style={{ width: "8px", height: i === 0 ? "20px" : "8px", opacity: i === 0 ? 1 : 0.4 }}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
 
           {/* Wrapper de contención — solo este tiene overflow:hidden */}
           <div style={{ height: `${THUMB_H}px`, overflow: "hidden" }}>

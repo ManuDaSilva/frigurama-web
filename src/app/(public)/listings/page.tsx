@@ -290,7 +290,7 @@ export default async function ListingsPage({
             No hay propiedades que coincidan con el filtro.
           </p>
         ) : (
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {listings.map((l) => (
               <ListingCard key={l.id} l={l} />
             ))}

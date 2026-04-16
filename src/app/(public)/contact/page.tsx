@@ -21,7 +21,7 @@ const DEFAULT_CONTACT: ContactContent = {
   ctaText: "HAZ TU CONSULTA AQUÍ",
   phone: "934763494",
   email: "info@frigurama.com",
-  address: "C/ de Muntaner, 200, 3º4ª, Eixample, 08036 Barcelona",
+  address: "C/ Muntaner, 200, 3º4ª, Eixample, 08036 Barcelona",
 };
 
 export default async function ContactPage() {

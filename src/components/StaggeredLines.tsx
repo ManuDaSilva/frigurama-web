@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 
 const LINES = [
-  "Propósito que guía",
-  "Estrategia que ordena",
-  "Equipo que cumple",
-  "Espacios que impulsan tu crecimiento.",
+  "Gestión segura,",
+  "Estrategia de confianza,",
+  "Equipo comprometido,",
+  "Espacios de ensueño.",
 ];
 
 export default function StaggeredLines() {

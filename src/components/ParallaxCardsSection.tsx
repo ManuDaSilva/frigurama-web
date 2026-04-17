@@ -93,9 +93,7 @@ export default function ParallaxCardsSection({
                 </a>
               </div>
               <p className="mt-8 max-w-[340px] text-[17px] leading-[1.15] text-black/70 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
-                Proyectos de gran envergadura, torres, oficinas y espacios integrales
-                diseñados con atención minuciosa para equilibrar funcionalidad y estética,
-                creando entornos que inspiran innovación, promueven la eficiencia y potencian el éxito.
+                Proyectos que presentan tu nuevo espacio de trabajo a tu medida equilibrando funcionalidad y estética. Crea entornos que inspiren innovación y potencien el éxito.
               </p>
             </div>
           </div>

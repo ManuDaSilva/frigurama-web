@@ -36,10 +36,10 @@ export type ContactContent = {
 const DEFAULT_CONTENT: ContactContent = {
   heading: "Mantente\nen contacto",
   lines: [
-    "Propósito que guía",
-    "Estrategia que ordena",
-    "Equipo que cumple",
-    "Espacios que impulsan tu crecimiento.",
+    "Gestión segura,",
+    "Estrategia de confianza,",
+    "Equipo comprometido,",
+    "Espacios de ensueño.",
   ],
   image: "/contacto-2.jpg",
   ctaText: "HAZ TU CONSULTA AQUÍ",

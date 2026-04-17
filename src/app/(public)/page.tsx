@@ -40,11 +40,10 @@ export default function Home() {
           className="w-full max-w-[480px] md:max-w-[780px] object-contain h-auto"
         />
         <h2 className="mt-8 md:mt-12 text-base md:text-xl font-light font-editorial">
-          For Modern Property Owners
+          Built on trust. Driven by results
         </h2>
         <p className="max-w-6xl text-base md:text-xl lg:text-2xl mt-6 md:mt-8 leading-[1.15] px-2 md:px-0">
-          EN ®FRIGURAMA TRANSFORMAMOS ESPACIOS EN VALOR. GESTIÓN INMOBILIARIA 360°
-          CON METODOLOGÍA PROPIA Y ENFOQUE EN MEDIR RESULTADOS.
+          EN ®FRIGURAMA TRANSFORMAMOS ESPACIOS EN VALOR, GESTIÓN INMOBILIARIA CON METODOLOGÍA PROPIA GARANTIZANDO RENTABILIDAD, TRANQUILIDAD Y CONFIANZA
         </p>
         <button
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}

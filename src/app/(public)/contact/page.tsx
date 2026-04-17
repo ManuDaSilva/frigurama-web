@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 const DEFAULT_CONTACT: ContactContent = {
   heading: "Mantente\nen contacto",
   lines: [
-    "Propósito que guía",
-    "Estrategia que ordena",
-    "Equipo que cumple",
-    "Espacios que impulsan tu crecimiento.",
+    "Gestión segura,",
+    "Estrategia de confianza,",
+    "Equipo comprometido,",
+    "Espacios de ensueño.",
   ],
   image: "/contacto.jpg",
   ctaText: "HAZ TU CONSULTA AQUÍ",

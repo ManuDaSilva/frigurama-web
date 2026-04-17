@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import ProjectCard from "@/components/ProjectCard";
+import StaggeredLines from "@/components/StaggeredLines";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,7 @@ export default async function ProjectsPage() {
                 ? "1 proyecto"
                 : `${projects.length} proyectos`}
             </p>
+            <StaggeredLines />
           </div>
         </div>
       </section>

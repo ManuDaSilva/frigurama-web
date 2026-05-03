@@ -23,7 +23,7 @@ const PROPERTY_TYPES = [
   { value: "Apartamento", label: "Apartamentos" },
   { value: "Piso",    label: "Pisos"    },
   { value: "Atico",   label: "Áticos"   },
-  { value: "Casa",    label: "Casas/Villas" },
+  { value: "Casa",    label: "Casas y Villas" },
   { value: "Adosado", label: "Adosados" },
   { value: "Estudio", label: "Estudios" },
   { value: "Local",   label: "Locales"  },
@@ -219,7 +219,7 @@ export default async function ListingsPage({
           </div>
 
           {/* Filtros secundarios */}
-          <form method="GET" action="/listings" className="pb-10 flex flex-col gap-3">
+          <form method="GET" action="/listings" autoComplete="off" className="pb-10 flex flex-col gap-3">
             {opFilter   && <input type="hidden" name="op"   value={opFilter}   />}
             {typeFilter && <input type="hidden" name="type" value={typeFilter} />}
             {(["asc","desc"].includes(dir) && sort !== "createdAt") && (
@@ -229,22 +229,25 @@ export default async function ListingsPage({
               </>
             )}
 
+            <input type="text"     name="fakeusernameremembered"  style={{ display: "none" }} />
+            <input type="password" name="fakepasswordremembered"  style={{ display: "none" }} />
+
             {/* Fila 1 — filtros primarios */}
             <div className="flex flex-wrap gap-2 items-center">
               <input
-                name="q" placeholder="Buscar…" defaultValue={q ?? ""}
+                name="q" placeholder="Buscar…" defaultValue={q ?? ""} autoComplete="off"
                 className="border border-gray-300 rounded-full px-4 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-gray-900 w-40"
               />
               <input
-                name="city" placeholder="Ciudad" defaultValue={city ?? ""}
+                name="city" placeholder="Ciudad" defaultValue={city ?? ""} autoComplete="off"
                 className="border border-gray-300 rounded-full px-4 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-gray-900 w-32"
               />
               <input
-                name="min" type="number" min={0} placeholder="€ mínimo" defaultValue={min ?? ""}
+                name="min" type="number" min={0} placeholder="€ mínimo" defaultValue={min ?? ""} autoComplete="off"
                 className="border border-gray-300 rounded-full px-4 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-gray-900 w-28"
               />
               <input
-                name="max" type="number" min={0} placeholder="€ máximo" defaultValue={max ?? ""}
+                name="max" type="number" min={0} placeholder="€ máximo" defaultValue={max ?? ""} autoComplete="off"
                 className="border border-gray-300 rounded-full px-4 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-gray-900 w-28"
               />
               <button
@@ -267,15 +270,15 @@ export default async function ListingsPage({
             <div className="flex flex-wrap gap-2 items-center">
               <span className="text-[13px] tracking-[0.18em] uppercase text-gray-500 mr-1">Refinar:</span>
               <input
-                name="bedrooms" type="number" min={0} placeholder="Hab. mín" defaultValue={minRooms ?? ""}
+                name="bedrooms" type="number" min={0} placeholder="Hab. mín" defaultValue={minRooms ?? ""} autoComplete="off"
                 className="border border-gray-200 rounded-full px-4 py-1.5 text-xs text-gray-500 placeholder-gray-300 bg-white focus:outline-none focus:border-gray-400 w-24"
               />
               <input
-                name="bathrooms" type="number" min={0} placeholder="Baños mín" defaultValue={minBaths ?? ""}
+                name="bathrooms" type="number" min={0} placeholder="Baños mín" defaultValue={minBaths ?? ""} autoComplete="off"
                 className="border border-gray-200 rounded-full px-4 py-1.5 text-xs text-gray-500 placeholder-gray-300 bg-white focus:outline-none focus:border-gray-400 w-24"
               />
               <input
-                name="minArea" type="number" min={0} placeholder="m² mín" defaultValue={minArea ?? ""}
+                name="minArea" type="number" min={0} placeholder="m² mín" defaultValue={minArea ?? ""} autoComplete="off"
                 className="border border-gray-200 rounded-full px-4 py-1.5 text-xs text-gray-500 placeholder-gray-300 bg-white focus:outline-none focus:border-gray-400 w-24"
               />
             </div>

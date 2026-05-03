@@ -100,10 +100,11 @@ export default function Home() {
               </Link>
             </div>
             <p className="mt-6 leading-[1.15] text-[15px] md:text-[17px] text-neutral-700 text-justify" style={{ fontFamily: "var(--font-editorial)", fontStyle: "normal" }}>
-              Proyectos pensados para disfrutar la vida en la ciudad, con
-              comodidad y elegancia en equilibrio, con áreas comunes
-              inspiradoras, circulaciones eficientes y una estética sobria que
-              se mantiene vigente con el paso del tiempo.
+              Proyectos diseñados para quienes buscan amplitud, privacidad y una
+              conexión más directa con el entorno. Villas y casas que combinan
+              arquitectura contemporánea con espacios generosos, pensados para
+              disfrutar del exterior, la luz natural y una vida más tranquila
+              sin renunciar al confort y la elegancia.
             </p>
           </div>
 

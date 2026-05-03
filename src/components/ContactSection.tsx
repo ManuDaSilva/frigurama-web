@@ -51,7 +51,7 @@ const DEFAULT_CONTENT: ContactContent = {
 export default function ContactSection({ content = DEFAULT_CONTENT }: { content?: ContactContent }) {
   const { ref, inView } = useInView(0.25);
   const pathname = usePathname();
-  const parts = content.heading.split("\n");
+  const parts = (content.heading ?? "").split("\n");
 
   return (
     <section

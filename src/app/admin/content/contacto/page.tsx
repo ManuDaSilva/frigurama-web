@@ -37,10 +37,12 @@ export default function AdminContactoPage() {
 
   useEffect(() => {
     fetch("/api/content/contacto")
-      .then((r) => r.json())
-      .then((data: ContactContent) => {
-        setContent(data);
-        setLinesText((data.lines ?? []).join("\n"));
+      .then((r) => r.ok ? r.json() : null)
+      .then((data: ContactContent | null) => {
+        if (!data) return;
+        const merged = { ...DEFAULT, ...data };
+        setContent(merged);
+        setLinesText((merged.lines ?? []).join("\n"));
       })
       .catch(() => {});
   }, []);

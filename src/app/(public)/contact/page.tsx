@@ -26,7 +26,7 @@ const DEFAULT_CONTACT: ContactContent = {
 
 export default async function ContactPage() {
   const row = await prisma.siteContent.findUnique({ where: { section: "contacto" } });
-  const content: ContactContent = (row?.content as ContactContent) ?? DEFAULT_CONTACT;
+  const content: ContactContent = { ...DEFAULT_CONTACT, ...(row?.content as Partial<ContactContent> ?? {}) };
 
   return (
     <main className="w-full min-h-screen bg-[#e7ecec] text-black font-sans pt-8 lg:pt-[81px]">

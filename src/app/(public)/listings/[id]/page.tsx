@@ -51,8 +51,16 @@ export async function generateMetadata(
     listing.operation === "alquiler" ? "Alquiler" :
     listing.operation === "venta"    ? "Venta"    : null;
 
-  const typeLabel =
-    (listing as any).type === "Atico" ? "Ático" : (listing as any).type;
+  const TYPE_LABELS: Record<string, string> = {
+    Apartamento:    "Apartamento",
+    CasaVilla:      "Casa o Villa",
+    EdificioOficina:"Edificio / Oficina",
+    TerrenoNave:    "Terreno / Nave",
+    Local:          "Local",
+    Garaje:         "Garaje",
+  };
+  const rawType = (listing as any).type as string | null;
+  const typeLabel = rawType ? (TYPE_LABELS[rawType] ?? rawType) : null;
 
   // Auto-description with useful specs when there's no manual description
   const autoDescription = [

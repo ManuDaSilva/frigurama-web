@@ -31,15 +31,11 @@ enum EnergyStatus {
 
 enum PropertyType {
   Apartamento
-  Piso
-  Atico
-  Casa
-  Adosado
-  Estudio
+  CasaVilla
+  EdificioOficina
+  TerrenoNave
   Local
   Garaje
-  Terreno
-  Oficina
 }
 
 model Listing {

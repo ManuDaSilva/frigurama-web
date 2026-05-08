@@ -93,7 +93,7 @@ export default function Home() {
               <h2 className="text-[28px] md:text-[36px] font-light tracking-tight uppercase leading-tight">
                 CASAS Y VILLAS
               </h2>
-              <Link href="/listings?type=Casa">
+              <Link href="/listings?type=CasaVilla">
                 <button className="mt-1 px-5 py-2 rounded-full bg-black text-white text-[10px] tracking-[0.2em] uppercase hover:bg-[#FF8614] transition-colors whitespace-nowrap">
                   MÁS INFO
                 </button>
@@ -126,9 +126,9 @@ export default function Home() {
           <div className="pt-2 w-full lg:w-[360px] shrink-0">
             <div className="flex items-start gap-4">
               <h2 className="text-[28px] md:text-[36px] font-light tracking-tight uppercase leading-tight">
-                TERRENOS/<br />NAVES INDUSTRIALES
+                TERRENOS Y<br />NAVES INDUSTRIALES
               </h2>
-              <Link href="/listings?type=Terreno">
+              <Link href="/listings?type=TerrenoNave">
                 <button className="mt-1 px-5 py-2 rounded-full bg-black text-white text-[10px] tracking-[0.2em] uppercase hover:bg-[#FF8614] transition-colors whitespace-nowrap">
                   MÁS INFO
                 </button>

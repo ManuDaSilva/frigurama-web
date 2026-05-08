@@ -68,7 +68,15 @@ export default function ListingHero({
     operation === "alquiler" ? "Alquiler" :
     operation === "venta"    ? "Venta"    : null;
 
-  const typeLabel = type === "Atico" ? "Ático" : type;
+  const TYPE_LABELS: Record<string, string> = {
+    Apartamento:    "Apartamento",
+    CasaVilla:      "Casa o Villa",
+    EdificioOficina:"Edificio / Oficina",
+    TerrenoNave:    "Terreno / Nave",
+    Local:          "Local",
+    Garaje:         "Garaje",
+  };
+  const typeLabel = type ? (TYPE_LABELS[type] ?? type) : null;
   const priceStr  = !priceHidden ? fmt(price) : null;
 
   const specs = [

@@ -113,7 +113,7 @@ async function main() {
         areaM2:      65,
         description: "Un piso luminoso en el centro de Vallecas",
         operation:   "venta",
-        type:        "Piso",
+        type:        "Apartamento",
       },
       {
         title:       "Ático en Eixample",
@@ -124,7 +124,7 @@ async function main() {
         areaM2:      110,
         description: "Ático con terraza en pleno Eixample",
         operation:   "venta",
-        type:        "Atico",
+        type:        "Apartamento",
       },
       {
         title:       "Estudio céntrico",
@@ -135,7 +135,7 @@ async function main() {
         areaM2:      35,
         description: "Estudio reformado ideal para inversión",
         operation:   "venta",
-        type:        "Estudio",
+        type:        "Apartamento",
       },
     ],
     skipDuplicates: true,

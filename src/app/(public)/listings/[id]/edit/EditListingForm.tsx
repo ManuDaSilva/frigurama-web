@@ -21,8 +21,8 @@ const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
 type ListingStatus = "activo" | "oculto" | "vendido" | "alquilado";
 type Operation     = "venta" | "alquiler";
 type PropertyType  =
-  | "Piso" | "Atico" | "Casa" | "Adosado"
-  | "Estudio" | "Local" | "Garaje" | "Terreno" | "Oficina";
+  | "Apartamento" | "CasaVilla" | "EdificioOficina"
+  | "TerrenoNave" | "Local" | "Garaje";
 type EnergyStatus  = "tiene" | "tramite" | "exento";
 type Condition     = "nuevo" | "reformado" | "buen-estado" | "a-reformar";
 
@@ -279,7 +279,7 @@ export default function EditListingForm({
   const [price, setPrice]             = useState(String(initial.price ?? ""));
   const [priceHidden, setPriceHidden] = useState(!!initial.priceHidden);
   const [communityFees, setCommunityFees] = useState(String(initial.communityFees ?? ""));
-  const [type, setType]               = useState<PropertyType>((initial.type as PropertyType) ?? "Piso");
+  const [type, setType]               = useState<PropertyType>((initial.type as PropertyType) ?? "Apartamento");
   const [condition, setCondition]     = useState<Condition | "">(
     (initial.condition as Condition) ?? ""
   );
@@ -536,13 +536,12 @@ export default function EditListingForm({
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Tipo de inmueble">
               <Select value={type} onChange={(v) => setType(v as PropertyType)}>
-                {(["Piso","Atico","Casa","Adosado","Estudio","Local","Garaje","Terreno","Oficina"] as const).map(
-                  (t) => (
-                    <option key={t} value={t}>
-                      {t === "Atico" ? "Ático" : t}
-                    </option>
-                  )
-                )}
+                <option value="Apartamento">Apartamentos</option>
+                <option value="CasaVilla">Casas y Villas</option>
+                <option value="EdificioOficina">Edificios y Oficinas</option>
+                <option value="TerrenoNave">Terrenos y Naves Industriales</option>
+                <option value="Local">Locales</option>
+                <option value="Garaje">Garajes</option>
               </Select>
             </Field>
             <Field label="Estado del inmueble">

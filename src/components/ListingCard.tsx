@@ -20,8 +20,15 @@ export default function ListingCard({ l }: { l: Listing }) {
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " €";
 
-  const typeLabel =
-    l.type === "Atico" ? "Ático" : l.type;
+  const TYPE_LABELS: Record<string, string> = {
+    Apartamento:    "Apartamento",
+    CasaVilla:      "Casa o Villa",
+    EdificioOficina:"Edificio / Oficina",
+    TerrenoNave:    "Terreno / Nave",
+    Local:          "Local",
+    Garaje:         "Garaje",
+  };
+  const typeLabel = l.type ? (TYPE_LABELS[l.type] ?? l.type) : null;
 
   const opLabel =
     l.operation === "alquiler" ? "Alquiler" :

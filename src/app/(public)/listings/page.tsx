@@ -20,16 +20,12 @@ function toInt(v: string | undefined) {
 }
 
 const PROPERTY_TYPES = [
-  { value: "Apartamento", label: "Apartamentos" },
-  { value: "Piso",    label: "Pisos"    },
-  { value: "Atico",   label: "Áticos"   },
-  { value: "Casa",    label: "Casas y Villas" },
-  { value: "Adosado", label: "Adosados" },
-  { value: "Estudio", label: "Estudios" },
-  { value: "Local",   label: "Locales"  },
-  { value: "Garaje",  label: "Garajes"  },
-  { value: "Terreno", label: "Terrenos/Naves Industriales" },
-  { value: "Oficina", label: "Edificios/Oficinas" },
+  { value: "Apartamento",    label: "Apartamentos"                  },
+  { value: "CasaVilla",      label: "Casas y Villas"                },
+  { value: "EdificioOficina",label: "Edificios y Oficinas"          },
+  { value: "TerrenoNave",    label: "Terrenos y Naves Industriales" },
+  { value: "Local",          label: "Locales"                       },
+  { value: "Garaje",         label: "Garajes"                       },
 ] as const;
 
 export default async function ListingsPage({
@@ -42,7 +38,7 @@ export default async function ListingsPage({
   // ── Filtros ──────────────────────────────────────────────────────────────
   const q        = (sp.q    as string | undefined)?.trim();
   const city     = (sp.city as string | undefined)?.trim();
-  const VALID_TYPES = ["Apartamento","Piso","Atico","Casa","Adosado","Estudio","Local","Garaje","Terreno","Oficina"] as const;
+  const VALID_TYPES = ["Apartamento","CasaVilla","EdificioOficina","TerrenoNave","Local","Garaje"] as const;
   const rawType    = (sp.type as string | undefined)?.trim();
   const typeFilter = VALID_TYPES.includes(rawType as never) ? (rawType as PropertyType) : undefined;
   const rawOp    = (sp.op as string | undefined)?.trim();

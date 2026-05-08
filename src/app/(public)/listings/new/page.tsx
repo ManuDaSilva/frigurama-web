@@ -105,15 +105,12 @@ type PropertyCondition = "nuevo" | "buen-estado" | "reformado" | "a-reformar";
 
 type FormState = {
   type?:
-    | "Piso"
-    | "Atico"
-    | "Casa"
-    | "Adosado"
-    | "Estudio"
+    | "Apartamento"
+    | "CasaVilla"
+    | "EdificioOficina"
+    | "TerrenoNave"
     | "Local"
-    | "Garaje"
-    | "Terreno"
-    | "Oficina";
+    | "Garaje";
 
   address?: string;
   city?: string;
@@ -164,7 +161,7 @@ type FormState = {
 };
 
 const EMPTY: FormState = {
-  type: "Piso",
+  type: "Apartamento",
   address: "",
   city: "",
   lat: undefined,
@@ -459,15 +456,12 @@ function StepTipologiaButtons({
     label: string;
     icon: string;
   }> = [
-    { key: "Piso", label: "Piso", icon: "🏢" },
-    { key: "Atico", label: "Ático", icon: "🏙️" },
-    { key: "Casa", label: "Casa", icon: "🏠" },
-    { key: "Adosado", label: "Adosado", icon: "🏘️" },
-    { key: "Estudio", label: "Estudio", icon: "🛋️" },
-    { key: "Local", label: "Local", icon: "🏪" },
-    { key: "Garaje", label: "Garaje", icon: "🚗" },
-    { key: "Terreno", label: "Terreno", icon: "🌳" },
-    { key: "Oficina", label: "Oficina", icon: "🏢" },
+    { key: "Apartamento",    label: "Apartamentos",                  icon: "🏢" },
+    { key: "CasaVilla",      label: "Casas y Villas",                icon: "🏠" },
+    { key: "EdificioOficina",label: "Edificios y Oficinas",          icon: "🏙️" },
+    { key: "TerrenoNave",    label: "Terrenos y Naves Industriales", icon: "🌳" },
+    { key: "Local",          label: "Locales",                       icon: "🏪" },
+    { key: "Garaje",         label: "Garajes",                       icon: "🚗" },
   ];
 
   return (

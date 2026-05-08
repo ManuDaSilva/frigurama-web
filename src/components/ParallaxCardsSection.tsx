@@ -86,7 +86,7 @@ export default function ParallaxCardsSection({
                 <h2 className="text-[28px] md:text-[36px] font-light tracking-tight uppercase leading-tight">
                   EDIFICIOS<br />Y OFICINAS
                 </h2>
-                <a href="/listings?type=Oficina">
+                <a href="/listings?type=EdificioOficina">
                   <button className="mt-1 px-5 py-2 rounded-full bg-black text-white text-[10px] tracking-[0.2em] uppercase hover:bg-[#FF8614] transition-colors whitespace-nowrap">
                     MÁS INFO
                   </button>

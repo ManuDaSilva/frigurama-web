@@ -104,14 +104,15 @@ export default function AdminListingActions({
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-end gap-2">
+
+      {/* Fila 1: Estado + Visibilidad */}
       <div className="flex items-center gap-2">
-        {/* Status changer */}
         <select
           value={status}
           disabled={busy}
           onChange={(e) => handleStatusChange(e.target.value as ListingStatus)}
-          className="text-xs border rounded px-2 py-1 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {(Object.keys(STATUS_LABELS) as ListingStatus[]).map((s) => (
             <option key={s} value={s}>
@@ -120,56 +121,56 @@ export default function AdminListingActions({
           ))}
         </select>
 
-        {/* Visibility toggle */}
         <button
           type="button"
           disabled={busy || succeeded}
           onClick={handlePublishedToggle}
-          className={`text-xs px-2 py-1 rounded border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
             succeeded
               ? "border-green-300 text-green-700 bg-green-50"
               : published
-              ? "border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-              : "border-orange-300 text-orange-600 hover:bg-orange-50"
+              ? "border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+              : "border-orange-300 text-orange-600 bg-orange-50 hover:bg-orange-100"
           }`}
         >
-          {succeeded ? "✓" : published ? "Visible" : "Oculto"}
+          {succeeded ? "✓ Guardado" : published ? "● Visible" : "○ Oculto"}
         </button>
+      </div>
 
-        {/* Public view link — only for active listings */}
+      {/* Fila 2: Ver + Editar + Eliminar */}
+      <div className="flex items-center gap-1.5">
         {isPublic && (
           <a
             href={`/listings/${id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-gray-600 hover:text-black underline underline-offset-2 transition-colors"
+            className="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900 transition-colors whitespace-nowrap"
           >
             Ver ↗
           </a>
         )}
 
-        {/* Edit link */}
         <a
           href={`/admin/listings/${id}/edit`}
-          className="text-xs text-gray-600 hover:text-black underline underline-offset-2 transition-colors"
+          className="text-xs px-3 py-1.5 rounded-lg bg-black text-white hover:bg-gray-700 transition-colors whitespace-nowrap"
         >
           Editar
         </a>
 
-        {/* Delete */}
         <button
           type="button"
           disabled={busy}
           onClick={handleDelete}
-          className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          title="Eliminar inmueble"
+          className="text-xs px-2 py-1.5 rounded-lg border border-red-200 text-red-400 hover:bg-red-50 hover:text-red-600 hover:border-red-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          Eliminar
+          ✕
         </button>
       </div>
 
-      {/* Inline error */}
+      {/* Error inline */}
       {error && (
-        <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1 max-w-[260px] text-right">
+        <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-2 py-1 max-w-[260px] text-right">
           {error}
         </p>
       )}
